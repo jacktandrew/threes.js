@@ -1,0 +1,76 @@
+* {margin: 0px; padding: 0px; text-decoration: none; font-family: helvetica; list-style-type: none;}
+body {margin: 10px;}
+.red {background: gray; opacity: .5; pointer-events: none; cursor: default;}
+.green {background: #FFFF7E;}
+#left_col, #right_col, button {border-width: 3px; border-style: outset;}
+button {}
+button:hover, .green .purse {cursor: hand; border-style: inset;}
+.stats .keepers .die, .unavailable {opacity: .5; pointer-events: none; cursor: default;}
+.keepers, .score, .remaining, .cash_box div {border: 3px inset #FFFFAE;}
+#outer, #left_col, #right_col {float: left;}
+#left_col, #right_col { height: 310px; padding: 10px;}
+
+#outer {height: 330px; width: 340px; position: relative;}
+#inner {height: 215px; width: 320px; padding: 10px;}
+#inner, .end_turn, .reset_scores {position: absolute;}
+
+#inner {top: 50px;}
+
+#outer h1 {margin-top: 50px;}
+#outer h1, #outer h3 {text-align: center;} 
+#outer h1, #outer h3, #new_game {display: none;}
+
+#new_game, .roll, .fold, .end_turn, .reset_scores, .new_game {width: 320px; height: 50px; font-size: 22px; margin: 0px 10px;}
+#new_game {margin: 30px 0 0 0px;}
+.fold, .roll {margin-top: 1px;}
+.end_turn, .reset_scores {top: 285px;}
+
+.cash_box, .stats {float: left;}
+.cash_box div { }
+.cash_box a {border: 3px dashed #333; border-radius: 30px; height: 25px; width: 25px;  padding: 5px; 
+  border-top-style:double; border-right-style:solid; border-bottom-style:double; border-left-style:solid;
+  display: block; font-size: 22px; font-weight: bold; text-align: center; margin: 10px 5px 5px 10px;}  
+#right_col .cash_box a {margin-left: 10px; margin-right: 5px;}
+.green .purse:hover {background: #FFFF33;}
+.green .cash_box a:hover {background: #FFFF33;}
+
+
+.stats .score, .stats .keepers, .cash_box div {height: 22px; width: 25px; margin: 5px; padding: 6px 10px ; text-align: center; font-size: 18px;}
+.stats h5, .cash_box h5 {text-align: center;}
+.stats .keepers {height: 200px; padding: 0px 9px; width: 30px;}
+.stats .keepers .die {margin-left: -5px;}
+.remaining {display: none;}
+.selected {background: yellow;}
+
+.die {height: 30px; width: 35px; border-radius: 7px; border: 2px outset #444; position: relative; 
+  margin-top: 5px; font-size: 0px;}
+.die div {border-radius: 5px; height: 4px; width: 5px; background: #333; position: absolute; border:2px inset #444;}
+
+.die[rel="3"] {margin-left: 10px;}
+.die[rel="1"] {margin-left: 60px;}
+.die[rel="2"] {margin-left: 110px;}
+.die[rel="4"] {margin-left: 160px;}
+.die[rel="5"] {margin-left: 210px;}
+.die[rel="6"] {margin-left: 260px;}
+
+.die[rel="1"] div {top: 11px; left: 13px;}
+
+.die[rel="2"] div, .die[rel="4"] div {top: 5px; left: 6px;}
+.die[rel="2"] div:last-child, .die[rel="4"] div:last-child {top: 17px; left: 20px;}
+
+.die[rel="3"] div, .die[rel="5"] div {top: 3px; left: 4px;}
+.die[rel="3"] div:nth-child(1), .die[rel="5"] div:nth-child(2) {top: 11px; left: 13px;}
+.die[rel="3"] div:last-child, .die[rel="5"] div:last-child {top: 19px; left: 22px;}
+
+.die[rel="4"] div:nth-child(1) {top: 5px; left: 20px;}
+.die[rel="4"] div:nth-child(2) {top: 17px; left: 6px;}
+
+.die[rel="5"] div:nth-child(1) {top: 3px; left: 22px;}
+.die[rel="5"] div:nth-child(3) {top: 19px; left: 4px;}
+
+.die[rel="6"] div {top: 1px; left: 4px;}
+.die[rel="6"] div:nth-child(1) {top: 11px; left: 4px;}
+.die[rel="6"] div:nth-child(2) {top: 21px; left: 4px;}
+.die[rel="6"] div:nth-child(3) {top: 1px; left: 22px;}
+.die[rel="6"] div:nth-child(4) {top: 11px; left: 22px;}
+.die[rel="6"] div:nth-child(5) {top: 21px; left: 22px;}
