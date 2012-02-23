@@ -1,8 +1,8 @@
 game = new Game(true);
-
-
+gamemodel = new GameModel(true);
 
 $('.roll').live('click', function(){
+  $(this).addClass('unavailable');
   theRoll = game.roll();
   html = ""
   for (i = 0; i < theRoll.length; i++) {
@@ -25,14 +25,20 @@ $('.roll').live('click', function(){
 });
 
 $('.die').live('click', function(){
-  
   if($(this).hasClass('selected')){
     $(this).removeClass('selected')
-    console.log('.die click UNchoose')
-    game.unchoose(parseInt($(this).html()));
+    game.unchoose(parseInt( $(this).html() ))
+    // if you unselect your only dice, ending your turn is no longer an option
+    if($('.selected').length === 0){
+      $('.end_turn').addClass('unavailable')
+    }
   } else {
     $(this).addClass('selected')
-    console.log('.die click choose')
-    game.choose(parseInt($(this).html()));
+    game.choose(parseInt( $(this).html() ))
+    $('.end_turn').removeClass('unavailable')
   }
+});
+
+$('.end_turn').click(function(){
+  $(this).addClass('unavailable')
 });
