@@ -27,12 +27,17 @@ button:hover, .green .purse {cursor: hand; border-style: inset;}
 
 .cash_box, .stats {float: left;}
 .cash_box div { }
-.cash_box a {border: 3px dashed #333; border-radius: 30px; height: 25px; width: 25px;  padding: 5px; 
+.cash_box a {border: 3px dashed #333; border-radius: 30px; height: 25px; width: 25px;  padding: 5px; color: #333; 
   border-top-style:double; border-right-style:solid; border-bottom-style:double; border-left-style:solid;
   display: block; font-size: 22px; font-weight: bold; text-align: center; margin: 10px 5px 5px 10px;}  
 #right_col .cash_box a {margin-left: 10px; margin-right: 5px;}
-.green .purse:hover {background: #FFFF33;}
-.green .cash_box a:hover {background: #FFFF33;}
+
+.ten_piece {background: blue;}
+.five_piece {background: red;}
+.one_piece {background: white;}
+
+.green .purse:hover {background: #FFDD33;}
+.green .cash_box a:hover {opacity: .6;}
 
 
 .stats .score, .stats .keepers, .cash_box div {height: 22px; width: 25px; margin: 5px; padding: 6px 10px ; text-align: center; font-size: 18px;}
