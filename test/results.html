@@ -1,10 +1,18 @@
 <script type="text/javascript" src="../js/lib/jquery.js"></script>
 <script>
 $(document).ready(function(){
-  function loadIt(){
-    $('#result').load('index.html #test_result');
-  }
+  $('#results a').click(function(){
+    // $('#results').load('index.html #test_result', function(){
+    //   $('#results a').remove();
+    // });
+    var url = 'index.html'
+    $.getJSON(url, function(data) {
+      $('#results a').remove();
+      $('#results').append(data)
+    });
+  });
+  
 });
 </script>
 
-<div id="results"></div>
+<div id="results"><a href="#">Click here to load results</a></div>

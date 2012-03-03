@@ -4,9 +4,11 @@ var Player = Class.extend({
     this.keepers = [];
     this.score = 0;
     this.ableToEnd = false;
+    this.folded = false;
     this.active = false;
     this.purse = $.jStorage.get(name, 50);
     this.bet = 0;
+    this.projection = this.score + (1.5 * (5 - this.keepers.length));
   },
   
   getBet: function(){
@@ -43,6 +45,10 @@ var Player = Class.extend({
   
   getScore: function(){
     return this.score;
+  },
+  
+  setProjection: function(array){
+    this.projection = this.score + (1.5 * (5 - this.keepers.length))
   }
 });
 

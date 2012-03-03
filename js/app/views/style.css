@@ -1,5 +1,8 @@
 * {margin: 0px; padding: 0px; text-decoration: none; font-family: helvetica; list-style-type: none;}
 body {margin: 10px;}
+
+table th {padding: 1px 3px;}
+
 .red {background: gray; opacity: .5; pointer-events: none; cursor: default;}
 .green {background: #FFFF7E;}
 #left_col, #right_col, button {border-width: 3px; border-style: outset;}

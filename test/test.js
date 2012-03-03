@@ -1,118 +1,100 @@
 var test = Class.extend({
   init: function(){
-    this.leader = "";
-    this.contender = "";
+    this.sortArray = []
   },
   
-  autoRoll: function(){
+  roll: function(){
     var theRoll = game.roll();
-    $('#test_results').append(player.name + " rolled = [" + theRoll.toString() + "]</br>")
   },
     
-  autoSelect: function(){
+  select: function(){
+    anySelected = false
     for(i = 0; i < theRoll.length; i++){
-      if (theRoll[i] === 1){
+      if (theRoll[i] === 1 || theRoll[i] === 3){
+        anySelected = true
         game.tempKeepers.push(theRoll[i])
-        game.adjustScore(theRoll[i])
-      } else if (theRoll[i] === 3){
-        game.tempKeepers.push(theRoll[i])
-      } else if (game.tempKeepers.length === 0){
-        theRoll.sort()
-        game.tempKeepers.push(theRoll[0])
-        game.adjustScore(theRoll[i])
-      }
+        if (theRoll[i] === 1){
+          game.adjustScore(theRoll[i])
+        }
+      }  
     }
-    
-    $('#test_results').append(player.name + " kept = [" + game.tempKeepers.toString() + "]</br>")
-    $('#test_results').append(player.name + "'s score is = " + player.score + "</br>")
+
+    if (anySelected === false){
+      theRoll.sort()
+      game.tempKeepers.push(theRoll[0])
+      game.adjustScore(theRoll[0])
+    }
+
+    player.keepers.concat(game.tempKeepers)
     $('.green .score').html(player.getScore())
     $('.green .keepers').append(intToHTML(game.tempKeepers))
   },
   
-  autoOpenBet: function(){
+  bet: function(){
     var bet = 0;
-    var projection = 1.5 * (5 - (game.tempKeepers.length + player.keepers.length))
-    if (projection < 4){
-      bet = 10
-    } else if (projection < 5){
-      bet = 5
-    } else if (projection < 7){
-      bet = 1
+    var leader = test.sortArray[0];
+    var call = game.highBet - player.bet
+    
+    if(player != leader){
+      var diff = leader.projection - player.projection;
     } else {
-      bet = 0
-    }
-    game.betUp(bet)
-    // console.log("the active player is " + player.name)
-    $('.green .bet').html(player.getBet())
-    $('.green .purse').html(player.getPurse())
-    $('#test_results').append(player.name + " bets " + bet + "</br>")
-  },
-  
-  autoRespondBet: function(){
-    // var myPro = 1.5 * (5 - (game.tempKeepers.length + player.keepers.length))
-    var firstPlace = 100;
-    var secondPlace = 100;
-    var leader = [];
-    var projection = 0;
-    for(i = 0; i < playerArray.length; i++){
-      projection = 1.5 * (5 - playerArray[i].keepers.length)
-      if (projection < firstPlace){
-        firstPlace = projection;
-        test.leader = playerArray[i];
-        console.log(test.leader.name + ' is in first')
-      }
-      
-      if (projection > firstPlace && projection < secondPlace){
-        secondPlace = projection
-        test.contender = playerArray[i]
-        console.log(test.leader.name + ' is in second')
-      }
+      var diff = test.sortArray[1].projection - leader.projection;
     }
     
-    if (player === test.leader){
-      console.log(test.leader.name + " is in the lead")
+    if (diff >= 2) {
+      bet = call + 5
+    } else if (0 <= diff && diff < 2) {
+      bet = call + 1
+    } else if (-4 <= diff && diff < 0) {
+      bet = call
+    } else if (diff < -4 && game.highBet === 0) {
+      bet = 0
+    } else if (diff < -4 && game.highBet > 0) {
+      game.fold()
     }
-    // var diff = 
-    // if (projection < 4){
-    //   bet = 10
-    // } else if (projection < 5){
-    //   bet = 5
-    // } else if (projection < 7){
-    //   bet = 1
-    // } else {
-    //   bet = 0
-    // }
-    // game.betUp(bet)
-    // $('.green .bet').html(player.getBet())
-    // $('#test_results').append(player.name + " bets " + bet + "</br>")    
+    
+    game.betUp(bet)
+    $('.green .bet').html(player.getBet())
+    $('.green .purse').html(player.getPurse())
+    $('#test_results table').append('<tr><td>' + player.name + '</td><td>' + theRoll + '</td><td>' + game.tempKeepers + '</td><td>' + player.keepers + '</td><td>' + player.score + '</td><td>' + bet + '</td><td>' + player.bet  + '</td><td>' + player.projection + '</td></tr>')
+  },
+    
+  play: function(boo){
+    if(boo == 'auto'){
+      while(game.isTheGameOver() === false){
+        takeTurn();
+      }
+    } else {
+      takeTurn();
+    }
+    
+    function takeTurn(){
+      if(game.isTheGameOver() === true){
+        // $('#test_results table').append('<tr><td  colspan="8"></td></tr>')
+        $('#test_results table').append('<tr><td colspan="8">THE GAME IS OVER</td></tr>')
+        return false
+      }
+      test.roll()
+      test.select()
+      game.finalizeChoices(game.tempKeepers);
+      game.findLeader()
+      test.bet()  
+      game.finalizeBet()
+      game.ableToEnd()
+
+      if(game.isTheGameOver() === true){
+        test.finishRound()
+      } else {
+        game.nextPlayer()
+      }
+      switchWhoIsActive()
+    }
   },
   
-  takeTurn: function(){
-
-      test.autoRoll();
-      test.autoSelect();
-      if (game.highBet > 0){
-        console.log('respond bet')
-        test.autoRespondBet();
-      } else {
-        // console.log('open bet')
-        test.autoOpenBet();
-      } 
-      
-      game.ableToEnd();
-      game.endTurn(game.tempKeepers);
-      game.nextPlayer();
-      switchWhoIsActive();
-      game.checkIfRolledAll();
-  }
-});
-
-
-
-$(document).ready(function(){
-  
-//  while(player.keepers.length < 5){
-
-
-  
+  finishRound: function(){
+    
+    game.findLeader()
+    game.transferWinnings()
+    winning();
+  }  
 });

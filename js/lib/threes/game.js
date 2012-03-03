@@ -5,6 +5,7 @@ playerArray = [ left, right ]
 var Game = Class.extend({
   init: function(playerArray){
     this.highBet = 0;
+    this.winnings = 0;
     this.playersDone = [];
     this.newArray = [];
     this.tempKeepers = [];
@@ -40,18 +41,23 @@ var Game = Class.extend({
   ableToEnd: function(){
     if(player.getBet() >= game.highBet && game.tempKeepers.length > 0){
       player.ableToEnd = true
-//      console.log('able to end = true')
       return true
     } else {
       player.ableToEnd = false
-      console.log('able to end = false')
       return false
     }
   },
   
-  endTurn: function(newArray){
+  finalizeChoices: function(newArray){
     comboArray = player.getKeepers().concat(newArray)
     player.setKeepers(comboArray)
+    player.setProjection()
+    if(player.getBet() > game.highBet){
+      game.highBet = player.getBet()
+    }
+  },
+  
+  finalizeBet: function(){
     if(player.getBet() > game.highBet){
       game.highBet = player.getBet()
     }
@@ -68,39 +74,47 @@ var Game = Class.extend({
     player.active = true;    
   },
   
-  checkIfRolledAll: function(){
-    if(game.playersDone.length === playerArray.length){
-      console.log('all players have kept 5 dice')
-      game.findWinner()
-      game.transferWinnings()
-    } else if(player.keepers.length === 5){
-      var paIdx = playerArray.indexOf(player)
-      console.log(player.name + " has kept 5 dice")
-      if(game.playersDone.indexOf(paIdx) === -1){
-        game.playersDone.push(paIdx)
+  isTheGameOver: function(){
+    if (player.folded === true) { return true }
+    
+    game.playersDone = []
+    for(i = 0; i < playerArray.length; i++){
+      if(playerArray[i].keepers.length === 5){
+        game.playersDone.push(i)
+        console.log('game.playersDone = ' + game.playersDone)
       }
-      game.nextPlayer()
     }
+    
+    if(game.playersDone.length === playerArray.length){
+      console.log('all the players have roll all their dice')
+      return true
+    }
+    return false
   },
   
+  fold: function(){
+    player.folded = true;
+  },
   
-  findWinner: function(){
-    console.log('find winner')
-    lowestScore = 29
-    for(i = 0; i + 1 < playerArray.length; i++){
-      if(playerArray[i].score < lowestScore){
-        lowestScore = playerArray[i].score
-        return i
+  findLeader: function() {
+    test.sortArray = [playerArray[0]]
+    for(i = 1; i < playerArray.length; i++){
+      if(playerArray[i].projection < test.sortArray[0].projection){
+        test.sortArray.unshift(playerArray[i])
+      } else {
+        test.sortArray.push(playerArray[i])
       }
-      console.log('winner ' + playerArray[i].name)
-      console.log('winning score ' + playerArray[i].score)
     }
   },
   
   transferWinnings: function(){
-    for(i = 0; i + 1 < playerArray.length; i++){
-      playerArray[game.findWinner()].adjustPurse( playerArray[i].getBet() )
-      console.log('transferWinnings ' + i)
+    for(i = 0; i < playerArray.length; i++){
+      game.winnings += playerArray[i].bet
+    }
+    test.sortArray[0].adjustPurse(game.winnings)
+    
+    for(i = 0; i < playerArray.length; i++){
+      $.jStorage.set(playerArray[i].name, playerArray[i].purse )
     }
   },
   

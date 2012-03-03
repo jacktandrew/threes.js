@@ -4,8 +4,8 @@ var player = left;
 player.active = true;
 
 $(document).ready(function(){
-  $('#left_col .purse').html(left.purse);
-  $('#right_col .purse').html(right.purse);
+  $('#left_col .purse').html(left.purse)
+  $('#right_col .purse').html(right.purse)
 });
 
 $('.roll').live('click', function(){
@@ -45,7 +45,7 @@ $('.die').live('click', function(){
     $('.green .score').html(player.getScore())
   } else {
     $(this).addClass('selected')
-    tempKeepers.push(parseInt( $(this).html() ))
+    game.tempKeepers.push(parseInt( $(this).html() ))
     game.adjustScore(parseInt( $(this).html() ))
     $('.green .score').html(player.getScore())
   }
@@ -92,51 +92,50 @@ $('.purse').live('click', function(){
   toggleCoins();
 });
 
-
 function switchWhoIsActive() {
   if(left.active === true){
     $('#left_col').removeClass('red').addClass('green')
     $('#right_col').removeClass('green').addClass('red')
-//    console.log('left active')
   } else if(right.active === true){
     $('#right_col').removeClass('red').addClass('green')
     $('#left_col').removeClass('green').addClass('red')
-//    console.log('right active')
   }
 }
 
-
 $('.end_turn').live('click', function(){
-  game.endTurn(tempKeepers)
-  html = intToHTML(tempKeepers);  
+  game.finalizeChoices(game.tempKeepers)
+  html = intToHTML(game.tempKeepers);  
   $('.green .keepers').append(html)
   
+  game.nextPlayer();
   switchWhoIsActive();
   
   $(this).addClass('unavailable')
   $('#inner').html('')
   $('.roll').removeClass('unavailable')
-  tempKeepers = []
 });
 
-
-
-function winning(winner, loser){
-  $('#outer h1, #outer h3, #new_game').show()
+function winning(){
+  $('.green .bet, .red .bet, .green .score, .red .score').html('0')
+  $('#left_col .purse').html(left.getPurse())
+  $('#right_col .purse').html(right.getPurse())
   
+  $('#outer h1, #outer h3, #new_game').show()
+  $('#outer h1').prepend(test.sortArray[0].name)
+  $('#outer h3 span').append(game.winnings - test.sortArray[0].bet)
   
   $('.roll').html('New Game').addClass('new_game').removeClass('roll')
   $('.end_turn').html('Reset Scores').removeClass('unavailable').addClass('reset_scores').removeClass('endTurn')
-  
-  $.jStorage.set()
-  $.jStorage.set()
-  
+    
   $('.new_game').click(function(){
-     window.location.reload();
+     window.location.reload()
   });
   
   $('.reset_scores').click(function(){
-    game.resetScores();
-    window.location.reload();
+    for(i = 0; i < playerArray.length; i++){
+      $.jStorage.deleteKey(playerArray[i].name)
+    }
+   window.location.reload();
   });
+  
 };
