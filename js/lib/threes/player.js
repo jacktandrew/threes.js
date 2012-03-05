@@ -1,12 +1,12 @@
 var Player = Class.extend({
-  init: function(name){
+  init: function(name, purse){
     this.name = name;
     this.keepers = [];
     this.score = 0;
     this.ableToEnd = false;
     this.folded = false;
     this.active = false;
-    this.purse = $.jStorage.get(name, 50);
+    this.purse = purse;
     this.bet = 0;
     this.projection = this.score + (1.5 * (5 - this.keepers.length));
   },

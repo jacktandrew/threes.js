@@ -1,9 +1,9 @@
-var test = Class.extend({
+var Test = Class.extend({
   init: function(){
-    this.sortArray = []
   },
   
   roll: function(){
+    $('#outer form').hide();
     var theRoll = game.roll();
   },
     
@@ -32,13 +32,13 @@ var test = Class.extend({
   
   bet: function(){
     var bet = 0;
-    var leader = test.sortArray[0];
+    var leader = game.sortArray[0];
     var call = game.highBet - player.bet
     
     if(player != leader){
       var diff = leader.projection - player.projection;
     } else {
-      var diff = test.sortArray[1].projection - leader.projection;
+      var diff = game.sortArray[1].projection - leader.projection;
     }
     
     if (diff >= 2) {
@@ -53,15 +53,19 @@ var test = Class.extend({
       game.fold()
     }
     
+    if(bet > player.purse){
+      bet = player.purse
+    }
+    
     game.betUp(bet)
     $('.green .bet').html(player.getBet())
     $('.green .purse').html(player.getPurse())
-    $('#test_results table').append('<tr><td>' + player.name + '</td><td>' + theRoll + '</td><td>' + game.tempKeepers + '</td><td>' + player.keepers + '</td><td>' + player.score + '</td><td>' + bet + '</td><td>' + player.bet  + '</td><td>' + player.projection + '</td></tr>')
+    $('#test_results table').append('<tr><td>' + player.name + '</td><td>' + theRoll + '</td><td>' + player.keepers + '</td><td>' + player.score + '</td><td>' + bet + '</td><td>' + player.bet  + '</td><td>' + player.projection + '</td></tr>')
   },
     
   play: function(boo){
-    if(boo == 'auto'){
-      while(game.isTheGameOver() === false){
+    if(boo == true){
+      while(game.isTheGameOver === false){
         takeTurn();
       }
     } else {
@@ -69,7 +73,7 @@ var test = Class.extend({
     }
     
     function takeTurn(){
-      if(game.isTheGameOver() === true){
+      if(game.isTheGameOver === true){
         // $('#test_results table').append('<tr><td  colspan="8"></td></tr>')
         $('#test_results table').append('<tr><td colspan="8">THE GAME IS OVER</td></tr>')
         return false
@@ -82,19 +86,13 @@ var test = Class.extend({
       game.finalizeBet()
       game.ableToEnd()
 
-      if(game.isTheGameOver() === true){
-        test.finishRound()
+      if(game.isTheGameOver === true){
+        $.jStorage.set('results', $('#test_results').html() )
+        tournement.endGame()
       } else {
         game.nextPlayer()
       }
       switchWhoIsActive()
     }
   },
-  
-  finishRound: function(){
-    
-    game.findLeader()
-    game.transferWinnings()
-    winning();
-  }  
 });

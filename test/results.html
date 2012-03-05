@@ -1,18 +1,18 @@
-<script type="text/javascript" src="../js/lib/jquery.js"></script>
-<script>
-$(document).ready(function(){
-  $('#results a').click(function(){
-    // $('#results').load('index.html #test_result', function(){
-    //   $('#results a').remove();
-    // });
-    var url = 'index.html'
-    $.getJSON(url, function(data) {
-      $('#results a').remove();
-      $('#results').append(data)
-    });
-  });
-  
-});
-</script>
+<html>
+  <head>
+    <script type="text/javascript" src="../js/lib/jquery.js"></script>
+    <script type="text/javascript" src="../js/lib/jStorage.js"></script>
 
-<div id="results"><a href="#">Click here to load results</a></div>
+    <script>
+    $(document).ready(function(){
+      $('#results a').click(function(){
+        results = $.jStorage.get('results')
+        $('#results').append(results)
+      });
+    });
+    </script>
+  </head>
+  <body>
+    <div id="results"><a href="#">Click here to load results</a></div>
+  </body>
+</html>

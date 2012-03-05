@@ -15,7 +15,16 @@ button:hover, .green .purse {cursor: hand; border-style: inset;}
 
 #outer {height: 330px; width: 340px; position: relative;}
 #inner {height: 215px; width: 320px; padding: 10px;}
-#inner, .end_turn, .reset_scores {position: absolute;}
+#inner, .start, .end_turn, .reset_scores {position: absolute;}
+
+#outer form { position: absolute; z-index: 1; margin-left: 15px;}
+#outer form input[type=text], #outer form input[type=password], #outer form input[type=email] { font-size: 12px; color: #666; width: 150px;}
+
+#outer form input[type=checkbox], #outer form span {font-size: 11px; height: 28px; vertical-align: middle;}
+#outer form input[type=checkbox] { margin-left: 15px;}
+
+#outer form h4 { padding: 5px; width: 111px; float: left;}
+#outer form .pword2 {margin: 3px 3px 3px 154px; visibility: hidden;}
 
 #inner {top: 50px;}
 
@@ -23,10 +32,13 @@ button:hover, .green .purse {cursor: hand; border-style: inset;}
 #outer h1, #outer h3 {text-align: center;} 
 #outer h1, #outer h3, #new_game {display: none;}
 
-#new_game, .roll, .fold, .end_turn, .reset_scores, .new_game {width: 320px; height: 50px; font-size: 22px; margin: 0px 10px;}
-#new_game {margin: 30px 0 0 0px;}
+/*#new_game, */
+.start, .roll, .fold, .end_turn, .reset_scores, .new_game {width: 320px; height: 50px; font-size: 22px; margin: 0px 10px;}
+
+/*#new_game {margin: 30px 0 0 0px;}*/
+
 .fold, .roll {margin-top: 1px;}
-.end_turn, .reset_scores {top: 285px;}
+.start, .end_turn, .reset_scores {top: 285px;}
 
 .cash_box, .stats {float: left;}
 .cash_box div { }
