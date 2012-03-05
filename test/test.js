@@ -66,6 +66,7 @@ var Test = Class.extend({
   play: function(boo){
     if(boo == true){
       while(game.isTheGameOver === false){
+        console.log('take auto turn')
         takeTurn();
       }
     } else {
@@ -78,16 +79,19 @@ var Test = Class.extend({
         $('#test_results table').append('<tr><td colspan="8">THE GAME IS OVER</td></tr>')
         return false
       }
-      test.roll()
-      test.select()
-      game.finalizeChoices(game.tempKeepers);
+      if(player.remaining() > 0){
+        test.roll()
+        test.select()
+        game.finalizeChoices(game.tempKeepers);
+      }
       game.findLeader()
-      test.bet()  
+      test.bet()
       game.finalizeBet()
       game.ableToEnd()
-
       if(game.isTheGameOver === true){
         $.jStorage.set('results', $('#test_results').html() )
+        $('#test_results table').append('<tr><td  colspan="8">THE GAME IS OVER</td></tr>')
+        $('#test_results table').append('<tr><td  colspan="8">and the winner is... ' + game.sortArray[0].name + '!!!!!!!!</td></tr>')
         tournement.endGame()
       } else {
         game.nextPlayer()

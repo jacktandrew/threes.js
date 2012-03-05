@@ -5,27 +5,27 @@ $(document).ready(function(){
 });
 
 function verifyUser(e){
-  console.log('a user is being verified')
+  // console.log('a user is being verified')
   name = $( e + ' .uname').attr('value');
   password = $( e + ' .pword').attr('value');
   password2 = $( e + ' .pword2').attr('value');
   
   if($(e + ' .newuser').attr('checked') === "checked"){
-    console.log('the newuser box was checked')
+    // console.log('the newuser box was checked')
     tournement.verifyNewUser(name, password, password2);
   } else {
-    console.log('the box was unchecked, this is an existing user')
+    // console.log('the box was unchecked, this is an existing user')
     tournement.verifyExistingUser(name, password);
   }
 }
 
 $('.start').live('click', function(){  
-  
+  clearOldHTML();
   verifyUser('#p1')
   verifyUser('#p2')
   tournement.setupGame();
   if(playerArray.length >= 2){
-    console.log('both users were verified!')
+    // console.log('both users were verified!')
     $(this).html('End Turn').removeClass('start').addClass('end_turn unavailable')
     $('.roll').removeClass('unavailable')
     $('#outer form, #outer h1, #outer h3').hide()
@@ -35,10 +35,9 @@ $('.start').live('click', function(){
     $('#left_col h4').html(playerArray[0].name)
     $('#right_col h4').html(playerArray[1].name)
   } else {
-    console.log('one or more users was not verified')
+    // console.log('one or more users was not verified')
     alert('You entered bogus information, not cool dude, not cool...')
   }
-  
 });
 
 $('.roll').live('click', function(){
@@ -146,8 +145,17 @@ $('.end_turn').live('click', function(){
   $('.end_turn').addClass('unavailable')
   
   $('#inner').html('')
-  $('.roll').removeClass('unavailable')
+  if(player.remaining() > 0){
+    $('.roll').removeClass('unavailable')
+  }
 });
+
+function clearOldHTML(){
+  $('#outer h1, #outer h3 span, #left_col .keepers, #right_col .keepers').html('')
+  $('#outer h1, #outer h3').hide()
+  $('.reset_scores').html('End Turn').removeClass('reset_scores').addClass('end_turn unavailable')
+  $('.new_game').html('Roll').removeClass('new_game').addClass('roll')
+}
 
 function winning(){
   $('.green .bet, .red .bet, .green .score, .red .score').html('0')
@@ -155,19 +163,18 @@ function winning(){
   $('#right_col .purse').html(playerArray[1].getPurse())
   
   $('#outer h1, #outer h3, #new_game').show()
-  $('#outer h1').prepend(test.sortArray[0].name)
-  $('#outer h3 span').append(game.winnings - test.sortArray[0].bet)
+  $('#outer h1').html(game.sortArray[0].name + ' Won')
+  $('#outer h3 span').append(tournement.winnings - game.sortArray[0].bet)
   
   $('.roll').html('New Game').removeClass('roll unavailable').addClass('new_game')
   $('.end_turn').html('Reset Scores').removeClass('end_turn unavailable').addClass('reset_scores')
     
   $('.new_game').click(function(){
-     window.location.reload()
+    tournement.refresh()
   });
   
   $('.reset_scores').click(function(){
     tournement.resetScores()
-    window.location.reload();
+    tournement.refresh()
   });
-  
 };

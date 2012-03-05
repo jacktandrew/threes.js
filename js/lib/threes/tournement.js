@@ -6,6 +6,7 @@ var player = [];
 var Tournement = Class.extend({
   init: function(){
     this.playersBust = [];
+    this.winnings = 0;
     this.allPlayers = $.jStorage.get("allPlayersKey");
   },
   
@@ -24,7 +25,7 @@ var Tournement = Class.extend({
       console.log('sorry, the passwords you entered did not match')
       return false
     } else {
-      console.log('a new user is a sucess for => ' + name)
+      // console.log('a new user is a sucess for => ' + name)
       newPlayer = [name, password, 50];  // 50 is the default purse value
       allPlayers.push(newPlayer);
       $.jStorage.set("allPlayersKey", allPlayers);
@@ -35,10 +36,10 @@ var Tournement = Class.extend({
   
   verifyExistingUser: function(name, password){
     if(tournement.findPlayer(name, allPlayers) != undefined){
-      console.log('Existing name is found! for => ' + name)
+      // console.log('Existing name is found! for => ' + name)
       singlePlayer = tournement.findPlayer(name, allPlayers)
       if(singlePlayer[1] === password){
-        console.log('password matches for => ' + name)
+        // console.log('password matches for => ' + name)
         tournement.setupPlayers(singlePlayer[0], singlePlayer[2])
         return true
       } else {
@@ -63,12 +64,24 @@ var Tournement = Class.extend({
   },
   
   transferWinnings: function(){
-    winnings = 0;
+    tournement.winnings = 0;
     for(i = 0; i < playerArray.length; i++){
-      winnings += playerArray[i].bet
-      playerArray[i].folded = false
+      tournement.winnings += playerArray[i].bet
     }
-    game.sortArray[0].adjustPurse(game.winnings)
+    if(game.isATie === true && game.isTheGameOver === true){
+      console.log('game.isATie === true the winnings are being stored')
+      $.jStorage.set('winnings', tournement.winnings)
+    } else {
+      game.sortArray[0].adjustPurse(tournement.winnings)
+      aPlayer = [];
+      for(k = 0; k < playerArray.length; k++){
+        aPlayer = playerArray[k]
+        singlePlayer = tournement.findPlayer(aPlayer.name, allPlayers)
+        singlePlayer[2] = aPlayer.purse
+        // console.log(aPlayer.name + "'s purse is being update in the server")
+      }
+    }
+    console.log('allPlayerKey is being set with value allPlayers')
     $.jStorage.set('allPlayersKey', allPlayers)
   },
   
@@ -78,6 +91,19 @@ var Tournement = Class.extend({
       singlePlayer[2] = 50;
     }
     $.jStorage.set('allPlayersKey', allPlayers)
+  },
+  
+  refresh: function(){
+    for(i = 0; i < playerArray.length; i++){
+      playerArray[i].keepers = []
+      playerArray[i].score = 0
+      playerArray[i].ableToEnd = false
+      playerArray[i].folded = false
+      playerArray[i].active = false
+      playerArray[i].bet = 0
+    }
+    tournement.setupGame();
+    console.log('game refreshed')
   },
   
   endGame: function(){

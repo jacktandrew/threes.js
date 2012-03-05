@@ -5,6 +5,7 @@ var Game = Class.extend({
     this.playersDone = [];
     this.tempKeepers = [];
     this.isTheGameOver = false;
+    this.isATie = false;
   },
 
   betUp: function(theBet){
@@ -34,7 +35,7 @@ var Game = Class.extend({
   },
   
   ableToEnd: function(){
-    if(player.getBet() >= game.highBet && game.tempKeepers.length > 0){
+    if(player.getBet() >= game.highBet && (game.tempKeepers.length > 0 || player.keepers.length === 5) ){
       player.ableToEnd = true
       return true
     } else {
@@ -64,7 +65,7 @@ var Game = Class.extend({
     player.active = false;
     
     function next(){
-      if (player.folded === true || player.remaining() === 0) {
+      if (player.folded === true || (player.remaining() === 0 && player.bet === game.highBet) ) {
         game.playersDone.push(player.name)
       }
       var paIdx = playerArray.indexOf(player)
@@ -80,7 +81,7 @@ var Game = Class.extend({
     }
     next();
     
-    if (player.folded === true || player.remaining() === 0) {
+    if (player.folded === true || (player.remaining() === 0 && player.bet === game.highBet) ) {
       next();
     }
     player.active = true;
@@ -88,15 +89,23 @@ var Game = Class.extend({
   
   fold: function(){
     player.folded = true;
+    game.isTheGameOver = true;
     $('#test_results table').append('<tr><td>' + player.name + '</td><td colspan="7">FOLDED!!!</td></tr>')
+    tournement.endGame();
   },
   
   findLeader: function() {
     game.sortArray = [playerArray[0]]
     for(i = 1; i < playerArray.length; i++){
-      if(playerArray[i].projection < game.sortArray[0].projection){
+      if (playerArray[i].projection === game.sortArray[0].projection){
+        console.log('it is a tie!!!')
+        game.isATie = true
+        game.sortArray.push(playerArray[i])
+      } else if(playerArray[i].projection < game.sortArray[0].projection){
+        game.isATie = false
         game.sortArray.unshift(playerArray[i])
       } else {
+        game.isATie = false
         game.sortArray.push(playerArray[i])
       }
     }
