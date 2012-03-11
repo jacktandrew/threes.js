@@ -1,13 +1,15 @@
 var Player = Class.extend({
-  init: function(name, purse){
-    this.name = name;
+  init: function(moniker, purse){
+    this.moniker = moniker;
+    this.purse = purse;
+    this.idxNum = 0;
     this.keepers = [];
     this.score = 0;
     this.ableToEnd = false;
     this.folded = false;
     this.active = false;
-    this.purse = purse;
     this.bet = 0;
+    this.remaining = 5 - this.keepers.length;
     this.projection = this.score + (1.5 * (5 - this.keepers.length));
   },
   
@@ -25,10 +27,6 @@ var Player = Class.extend({
   
   adjustPurse: function(integer){
     this.purse += integer;
-  },
-
-  remaining: function(){
-    return 5 - this.keepers.length; 
   },
   
   setKeepers: function(array){

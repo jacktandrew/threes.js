@@ -1,112 +1,131 @@
 var Game = Class.extend({
-  init: function(playerArray){
+  init: function() {
     this.highBet = 0;
-    this.sortArray = [];
-    this.playersDone = [];
+    this.playerArray = [];
     this.tempKeepers = [];
     this.isTheGameOver = false;
-    this.isATie = false;
+    this.aTie = true;
   },
 
-  betUp: function(theBet){
+  betUp: function(theBet) {
     player.adjustPurse(-theBet)
     player.adjustBet(theBet)
   },
   
-  resetBet: function(){
+  resetBet: function() {
     player.adjustPurse(player.getBet() - game.highBet)
     player.adjustBet(-(player.getBet() - game.highBet))
   },
 
-  roll: function(){
-    remaining = player.remaining();
+  roll: function() {
     theRoll = [];
-    for (i = 0; i < remaining; i++) {
+    for (i = 0; i < player.remaining; i++) {
       var randNum = Math.floor(Math.random()*6) + 1;
       theRoll.push(randNum)
     }
     return theRoll
   },
 
-  adjustScore: function(theInteger){
+  adjustScore: function(theInteger) {
     score = player.getScore();
     score += theInteger
     player.setScore(score)
   },
   
-  ableToEnd: function(){
-    if(player.getBet() >= game.highBet && (game.tempKeepers.length > 0 || player.keepers.length === 5) ){
-      player.ableToEnd = true
-      return true
+  ableToEnd: function() {
+    if (player.getBet() >= game.highBet || player.purse === 0 ) {
+      if (game.tempKeepers.length > 0 || player.keepers.length === 5) {
+        player.ableToEnd = true
+        return true
+      }
     } else {
       player.ableToEnd = false
       return false
     }
   },
   
-  finalizeChoices: function(tempKeepers){
-    comboArray = player.getKeepers().concat(tempKeepers)
-    player.setKeepers(comboArray)
+  finalizeChoices: function(array) {
+    player.setKeepers(player.getKeepers().concat(array))
     player.setProjection()
-    if (player.getBet() > game.highBet){
-      game.highBet = player.getBet()
-    }
   },
   
-  finalizeBet: function(){
-    if(player.getBet() > game.highBet){
-      game.highBet = player.getBet()
-    }
+  clearKeepers: function() {
+    game.tempKeepers = []
   },
   
-  nextPlayer: function(){
-    game.playersDone = [];
-    game.tempKeepers = [];
+  findHighBet: function() {
+    // if(player.getBet() > game.highBet) {
+    //   game.highBet = player.getBet()
+    // }
+    // return game.highBet
+    return game.highBet = _.max(_.pluck(game.playerArray, 'bet'))
+  },
+  
+  nextPlayer: function() {
+    game.playerArray.sort(game.orderByIndex)
     player.active = false;
-    
-    function next(){
-      if (player.folded === true || (player.remaining() === 0 && player.bet === game.highBet) ) {
-        game.playersDone.push(player.name)
-      }
-      var paIdx = playerArray.indexOf(player)
-      if(paIdx + 1 < playerArray.length){
-        player = playerArray[paIdx + 1]
-      } else if(paIdx + 1 === playerArray.length){
-        player = playerArray[0]
-      }
-      if (game.playersDone.length === playerArray.length) {
-        game.isTheGameOver = true;
-        tournement.endGame();
-      }
-    }
-    next();
-    
-    if (player.folded === true || (player.remaining() === 0 && player.bet === game.highBet) ) {
-      next();
+    if(player.idxNum + 1 < game.playerArray.length) {
+      player = game.playerArray[player.idxNum + 1]
+    } else if(player.idxNum + 1 === game.playerArray.length) {
+      player = game.playerArray[0]
     }
     player.active = true;
   },
   
-  fold: function(){
-    player.folded = true;
-    game.isTheGameOver = true;
-    $('#test_results table').append('<tr><td>' + player.name + '</td><td colspan="7">FOLDED!!!</td></tr>')
-    tournement.endGame();
+  isAbleToPlay: function(player) {
+    if (player.folded === true) {
+      return false
+    } else if (player.remaining === 0 && player.bet === game.highBet) {
+      return false
+    } else {
+      return true
+    }
   },
   
-  findLeader: function() {
-    game.sortArray = [playerArray[0]]
-    for(i = 1; i < playerArray.length; i++){
-      if (playerArray[i].projection === game.sortArray[0].projection){
-        console.log('it is a tie!!!')
-        game.isATie = true
-        game.sortArray.push(playerArray[i])
-      } else if(playerArray[i].projection < game.sortArray[0].projection){
-        game.isATie = false
-        game.sortArray.unshift(playerArray[i])
-      } else {
-        game.isATie = false
-        game.sortArray.push(playerArray[i])
+  isATie: function() {
+    if (game.playerArray[0].projection === game.playerArray[1].projection) {
+      return game.aTie = true
+    } else {
+      return game.aTie = false
+    }
+  },
+  
+  orderByProj: function(a, b) {
+    console.log('orderByProj')
+    return a.projection - b.projection;
+  },
+  
+  orderByIndex: function(a, b) {
+    console.log('orderByIndex')
+    return a.idxNum - b.idxNum;
+  },
+  
+  // orderByRemaining: function(a, b) {
+  //   console.log('orderByRemaining')
+  //   return b.remaining - a.remaining
+  // },
+  
+  allDiceRolled: function(){
+    _.max(_.pluck(game.playerArray, 'remaining'))
+  }
+  
+  fold: function() {
+    player.folded = true;
+    game.nextPlayer()
+    tournement.endGame()
+  },
+  
+  endTurn: function() {
+    game.finalizeChoices(game.tempKeepers)
+    game.findHighBet()
+    game.playerArray.sort(game.orderByRemaining)
+    if (game.playerArray[0].remaining === 0) {
+      game.isTheGameOver = true
+      console.log(' game.isTheGameOver = ' + game.isTheGameOver)
+    } else {
+      game.nextPlayer()
+      if (game.isAbleToPlay(player) === false) { 
+        game.nextPlayer() 
       }
     }
   }

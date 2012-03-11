@@ -1,12 +1,13 @@
 <head>
   <script type="text/javascript" src="../js/lib/jquery.js"></script>
+  <!-- <script type="text/javascript" src="../js/lib/backbone.js"></script>  -->
   <script type="text/javascript" src="../js/lib/jStorage.js"></script>
   <script type="text/javascript" src="../js/lib/simple-inheritance.js"></script>
-  <script type="text/javascript" src="../js/lib/threes/tournement.js"></script>
-  <script type="text/javascript" src="../js/lib/threes/player.js"></script>
+  <script type="text/javascript" src="../js/lib/underscore.js"></script>
   <script type="text/javascript" src="../js/lib/threes/game.js"></script>
+  <script type="text/javascript" src="../js/lib/threes/player.js"></script>
+  <script type="text/javascript" src="../js/lib/threes/tournement.js"></script>
   <script type="text/javascript" src="test.js"></script>
-  
   <script type="text/javascript" src="../js/app/views/browser.js"></script>
   <link rel="stylesheet" type="text/css" href="../js/app/views/style.css" />
   <script>
@@ -57,7 +58,9 @@
   </div>
   
   <div id="outer">
-    <button class="roll unavailable">Roll</button>
+    <button id="roll" class="unavailable">Roll</button>
+    <button id="fold">Fold</button>
+    <button id="new_game">New Game</button>
     <form>
       </br></br>
       <h4>First Player</h4>
@@ -110,8 +113,13 @@
     </form>
     <div id="inner"></div>
     <h1></h1>
+    <h2>It was a TIE!</h2>
+    <h5>The the pot will go to the winner of next round</h5>
     <h3>and took home <span></span> in winnings</h3>
-    <button class="start">Start</button>
+    
+    <button id="start">Start</button>
+    <button id="end_turn" class="unavailable">End Turn</button>
+    <button id="reset_scores">Reset Scores</button>
   </div>
 
   <div id="right_col" class="red">    

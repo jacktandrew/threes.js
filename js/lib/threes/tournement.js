@@ -1,46 +1,43 @@
-var game = [];
-var test = [];
-var playerArray = [];
-var player = [];
+var game = {};
+var test = {};
+var player = {};
 
 var Tournement = Class.extend({
-  init: function(){
-    this.playersBust = [];
+  init: function() {
+    this.stillAfloat = [];
     this.winnings = 0;
     this.allPlayers = $.jStorage.get("allPlayersKey");
   },
   
-  findPlayer: function(name, array){
-    for (i = 0; i < array.length; i++){  
-      idx = array[i].indexOf(name)
-      if (idx != -1) { return array[i] }
+  findPlayer: function(moniker, array) {
+    for (i = 0; i < array.length; i++) {  
+      if(array[i].username === moniker) { 
+        return array[i]
+      }
     }
   },
   
-  verifyNewUser: function(name, password, password2){
-    if (tournement.findPlayer(name, allPlayers) != undefined){
+  verifyNewUser: function(moniker, password, password2) {
+    if (tournement.findPlayer(moniker, allPlayers) != undefined) {
       console.log('sorry another user is already using that name')
       return false
-    } else if (password != password2){        
+    } else if (password != password2) {        
       console.log('sorry, the passwords you entered did not match')
       return false
     } else {
-      // console.log('a new user is a sucess for => ' + name)
-      newPlayer = [name, password, 50];  // 50 is the default purse value
+      newPlayer = {username: moniker, password: password, purse:  50};  // 50 is the default purse value
       allPlayers.push(newPlayer);
       $.jStorage.set("allPlayersKey", allPlayers);
-      tournement.setupPlayers(newPlayer[0], newPlayer[2])
+      tournement.setupPlayers(newPlayer.username, newPlayer.purse)
       return true
     }
   },
   
-  verifyExistingUser: function(name, password){
-    if(tournement.findPlayer(name, allPlayers) != undefined){
-      // console.log('Existing name is found! for => ' + name)
-      singlePlayer = tournement.findPlayer(name, allPlayers)
-      if(singlePlayer[1] === password){
-        // console.log('password matches for => ' + name)
-        tournement.setupPlayers(singlePlayer[0], singlePlayer[2])
+  verifyExistingUser: function(moniker, password) {
+    if(tournement.findPlayer(moniker, allPlayers) != undefined) {
+      singlePlayer = tournement.findPlayer(moniker, allPlayers)
+      if(singlePlayer.password === password) {
+        tournement.setupPlayers(singlePlayer.username, singlePlayer.purse)
         return true
       } else {
         console.log('sorry your password did not match the one stored in our database')
@@ -52,75 +49,74 @@ var Tournement = Class.extend({
     }
   },
   
-  setupPlayers: function(name, purse){
-    p = new Player(name, purse)
-    playerArray.push(p)
-    player = playerArray[0]
+  setupPlayers: function(moniker, purse) {
+    p = new Player(moniker, purse)
+    game.playerArray.push(p)
+    idx = game.playerArray.indexOf(p)
+    game.playerArray[idx].idxNum = idx
+    tournement.stillAfloat.push(moniker)
+    player = game.playerArray[0]
     player.active = true;
   },
   
-  setupGame: function(){
-    game = new Game(playerArray);
+  transferWinnings: function(p) {
+    tournement.winnings += p.bet                                    // add all of their bets to the winnings
+    console.log('winnings = ' + tournement.winnings)
+    dataBaseEntry = tournement.findPlayer(p.moniker, allPlayers)    // find each player in AllPlayers database
+    dataBaseEntry.purse = p.purse                                      // update the database with the new data from the array
+  },
+
+  storeWinnings: function() {
+    console.log('storeWinnings')
+    if(game.isATie() === true) {
+      console.log('game.isATie() === true the winnings are being stored')   
+      $.jStorage.set('winnings', tournement.winnings)                 // store the winnings for next round
+    } else {                                              
+      var winner = game.playerArray.sort(tournement.orderByProj)[0]
+      winner.adjustPurse(tournement.winnings)                         // add the winnings to his purse
+      console.log(winner.moniker + ' just received ' + tournement.winnings + ' in winnings')
+      $.jStorage.set('allPlayersKey', allPlayers)
+      console.log('allPlayersKey is being set with value allPlayers')
+    }
   },
   
-  transferWinnings: function(){
-    tournement.winnings = 0;
-    for(i = 0; i < playerArray.length; i++){
-      tournement.winnings += playerArray[i].bet
-    }
-    if(game.isATie === true && game.isTheGameOver === true){
-      console.log('game.isATie === true the winnings are being stored')
-      $.jStorage.set('winnings', tournement.winnings)
-    } else {
-      game.sortArray[0].adjustPurse(tournement.winnings)
-      aPlayer = [];
-      for(k = 0; k < playerArray.length; k++){
-        aPlayer = playerArray[k]
-        singlePlayer = tournement.findPlayer(aPlayer.name, allPlayers)
-        singlePlayer[2] = aPlayer.purse
-        // console.log(aPlayer.name + "'s purse is being update in the server")
-      }
-    }
-    console.log('allPlayerKey is being set with value allPlayers')
+  resetScores: function(p) {
+    console.log('resetScores')
+    tournement.findPlayer(p, allPlayers).purse = 50;
     $.jStorage.set('allPlayersKey', allPlayers)
+    console.log(p.moniker + "'s purse = 50")
   },
   
-  resetScores: function(){
-    for(i = 0; i < playerArray.length; i++){
-      singlePlayer = tournement.findPlayer(playerArray[i].name, allPlayers)
-      singlePlayer[2] = 50;
+  refresh: function(p) {
+    p.keepers = [];
+    p.score = 0
+    p.ableToEnd = false
+    p.folded = false
+    p.active = false
+    p.bet = 0
+    p.projection = 0;
+    tournement.winnings = 0;                                              // clear out any old winnings
+    console.log(player.moniker + ' refreshed')
+  },
+  
+  endGame: function() {
+    game.playerArray.sort(tournement.orderByProj)
+    for(j = 0; j < game.playerArray.length; j++) {
+      console.log('calling on tournement.transferWinnings j = ' + j)
+      tournement.transferWinnings(game.playerArray[j])
     }
-    $.jStorage.set('allPlayersKey', allPlayers)
+    tournement.storeWinnings()
   },
   
-  refresh: function(){
-    for(i = 0; i < playerArray.length; i++){
-      playerArray[i].keepers = []
-      playerArray[i].score = 0
-      playerArray[i].ableToEnd = false
-      playerArray[i].folded = false
-      playerArray[i].active = false
-      playerArray[i].bet = 0
+  checkForOverallWinner: function(p) {
+    if(p.purse = 0) {
+      idx = tournement.stillAfloat.indexOf(p.moniker)
+      tournement.stillAfloat.splice(idx, 1)
+      console.log('tournement.stillAfloat = ' + tournement.stillAfloat)
+      console.log(p.moniker + ' = ' + p.purse)
     }
-    tournement.setupGame();
-    console.log('game refreshed')
-  },
-  
-  endGame: function(){
-    game.findLeader()
-    tournement.transferWinnings()
-    winning();
-  },
-  
-  endTournement: function(){
-    tournement.playersBust = []
-    for (i = 0; i < playerArray.length; i++){
-      if(playerArray[i].purse = 0){
-        playersBust.push(playerArray[i])
-      }
-    }
-    if(tournement.playersBust.length === playerArray.length - 1){
+    if (tournement.stillAfloat.length === 0) {
       console.log('WE HAVE AN OVER WINNER!!!!')
-    }
+    }    
   }
 });
