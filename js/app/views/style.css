@@ -1,4 +1,4 @@
-* {margin: 0px; padding: 0px; text-decoration: none; font-family: helvetica; list-style-type: none;}
+* { margin: 0px; padding: 0px; text-decoration: none; font-family: helvetica; list-style-type: none;}
 body {margin: 10px;}
 
 table th {padding: 1px 3px;}
@@ -12,6 +12,12 @@ button:hover, .green .purse {cursor: hand; border-style: inset;}
 .keepers, .score, .remaining, .cash_box div {border: 3px inset #FFFFAE;}
 #outer, #left_col, #right_col {float: left;}
 #left_col, #right_col { height: 310px; padding: 10px;}
+#left_col, #right_col, #inner, #outer, button {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  }
 
 #outer {height: 330px; width: 340px; position: relative;}
 #inner {height: 215px; width: 320px; padding: 10px;}
