@@ -124,6 +124,7 @@ var Game = Class.extend({
     player.remaining = 0;
     game.ableToEnd = true;
     game.endTurn()
+    
   },
   
   endTurn: function() {
