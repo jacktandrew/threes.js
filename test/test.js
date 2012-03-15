@@ -75,7 +75,8 @@ var Test = Class.extend({
   },
 
   autoPlay: function() {
-    while(game.isGameOver === false) {
+    console.log('auto turn')
+    while(game.isGameOver() === false) {
       console.log('take auto turn')
       test.play();
     }
@@ -102,8 +103,7 @@ var Test = Class.extend({
     if(game.isGameOver() === true || player.folded === true) {
       tournement.endGame()
       $.jStorage.set('results', $('#test_results').html() )
-      $('#test_results table').append('<tr><td  colspan="8">THE GAME IS OVER</td></tr>')
-      $('#test_results table').append('<tr><td  colspan="8">and the winner is... ' + game.playerArray.sort(game.sortByProj)[0].username + '!!!!!!!!</td></tr>')
+      $('#test_results table').append('<tr><td  colspan="8">***THE GAME IS OVER*** and the winner is... ' + game.playerArray.sort(game.sortByProj)[0].username + '!!!!!!!!</td></tr>')
       winning()
       return false
     } 

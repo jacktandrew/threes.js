@@ -2,6 +2,7 @@ $(document).ready(function() {
   tournement = new Tournement();
   game = new Game();
   test = new Test();
+  ai = new AI();
   allPlayers = $.jStorage.get("allPlayersKey", [ {username: "Username1", password: "Password", purse: 50}, {username: "Username2", password: "Password", purse: 50} ] );
 });
 
@@ -9,11 +10,15 @@ function verifyUser(e) {
   moniker = $( e + ' .uname').attr('value');
   password = $( e + ' .pword').attr('value');
   password2 = $( e + ' .pword2').attr('value');
-  
-  if($(e + ' .newuser').attr('checked') === "checked") {
-    tournement.verifyNewUser(moniker, password, password2);
+  if($(e + ' .cpu').attr('checked') === "checked" ) {
+    console.log(e + ' is a cpu')
+    tournement.setupPlayers('computer', 50, false)
   } else {
-    tournement.verifyExistingUser(moniker, password);
+    if($(e + ' .newuser').attr('checked') === "checked") {
+      tournement.verifyNewUser(moniker, password, password2);
+    } else {
+      tournement.verifyExistingUser(moniker, password);
+    }
   }
 }
 
@@ -34,52 +39,43 @@ function startGame(){
     // console.log('one or more users was not verified')
     alert('You entered bogus information, not cool dude, not cool...')
   }
+  if (player.human === false) {
+    ai.play()
+  }
 }
 
-$('#start').live('click', function() {
-  startGame()
-});
-
-$('#roll').live('click', function() {
-  $(this).hide();
+function rollAction() {
+  $('#roll').hide();
   $('#fold').show()
-  theRoll = game.roll();
+  game.roll();
   html = intToHTML(theRoll);
   $('#inner').html(html);
-});
+}
 
 function intToHTML(arr) {
   var html = ""
   arr.forEach( function(x) {
-    if(x === 1) {
-      html += '<div class="die" rel="1"><div></div></div>'
-    } else if(x === 2) {
-      html += '<div class="die" rel="2"><div></div><div></div></div>'
-    } else if(x === 3) {
-      html += '<div class="die" rel="3"><div></div><div></div><div></div></div>'
-    } else if(x === 4) {
-      html += '<div class="die" rel="4"><div></div><div></div><div></div><div></div></div>'
-    } else if(x === 5) {
-      html += '<div class="die" rel="5"><div></div><div></div><div></div><div></div><div></div></div>'
-    } else if(x === 6) {
-      html += '<div class="die" rel="6"><div></div><div></div><div></div><div></div><div></div><div></div></div>'
-    }
+    if (x === 1) { html += '<div class="die" rel="1"><div></div></div>' } 
+    else if (x === 2) { html += '<div class="die" rel="2"><div></div><div></div></div>' } 
+    else if (x === 3) { html += '<div class="die" rel="3"><div></div><div></div><div></div></div>' } 
+    else if (x === 4) { html += '<div class="die" rel="4"><div></div><div></div><div></div><div></div></div>' } 
+    else if (x === 5) { html += '<div class="die" rel="5"><div></div><div></div><div></div><div></div><div></div></div>' } 
+    else if (x === 6) { html += '<div class="die" rel="6"><div></div><div></div><div></div><div></div><div></div><div></div></div>' }
   })
   return html;
 };
 
-$('.die').live('click', function() {
-  if($(this).hasClass('selected')) {
-    $(this).removeClass('selected')
-    game.unchoose( +$(this).attr('rel') )
+function selectOrUnselect(e) {
+  if($(e).hasClass('selected')) {
+    $(e).removeClass('selected')
+    game.unchoose( +$(e).attr('rel') )
     $('.green .score').html(player.score)
   } else {
-    $(this).addClass('selected')
-    game.choose( +$(this).attr('rel') )
+    $(e).addClass('selected')
+    game.choose( +$(e).attr('rel') )
     $('.green .score').html(player.score)
   }
-  isAbleToEnd();
-});
+}
 
 function toggleCoins() {
   $('.green .cash_box a').each(function() {
@@ -94,16 +90,21 @@ function toggleCoins() {
   });
 };
 
-// bet up
-$('.green .cash_box a').live('click', function() {
-  game.betUp( +$(this).html() )
+function moveKeepers() {
+  if (typeof(tempKeepers) !== "undefined") {
+    html = intToHTML(tempKeepers)
+    $('.green .keepers').append(html)
+    $('#inner').html('')
+  }
+}
+
+function displayBet() {
   $('.green .purse').html(player.purse)
   $('.green .bet').html(player.bet)
-  isAbleToEnd()
   if(player.purse < 10) {
     toggleCoins();
   }
-});
+}
 
 function isAbleToEnd() {
   if(game.ableToEnd === true) {
@@ -112,14 +113,6 @@ function isAbleToEnd() {
     $('#end_turn').addClass('unavailable')
   }
 }
-
-// reset bet
-$('.purse').live('click', function() {  
-  game.resetBet();
-  $('.green .purse').html(player.purse)
-  $('.green .bet').html(player.bet)
-  toggleCoins();
-});
 
 function switchWhoIsActive() {
   if(game.playerArray[0].active === true) {
@@ -131,41 +124,10 @@ function switchWhoIsActive() {
   }
 }
 
-$('#end_turn').live('click', function() {
-  if (typeof(tempKeepers) !== "undefined") {
-    html = intToHTML(tempKeepers)
-    $('.green .keepers').append(html)
-    $('#inner').html('')
-  }
-  
-  game.endTurn()
-  if (game.isGameOver() === true) { 
-    winning() 
-  } else {
-    if(player.remaining === 0) { 
-      $('#roll').addClass('unavailable') 
-    } else { 
-      $('#roll').removeClass('unavailable') 
-    }
-    $('#fold').hide()
-    $('#roll').show()
-    $('#end_turn').addClass('unavailable')
-    switchWhoIsActive()
-    isAbleToEnd()
-  }
-});
-
-$('#fold').live('click', function() {
-  console.log('fold click')
-  game.fold()
-  winning()
-  $('#inner').html('')
-});
-
 function clearOldHTML() {
   $('.green .bet, .red .bet, .green .score, .red .score').html('0')
   $('#outer h1, #outer h3 span, #left_col .keepers, #right_col .keepers').html('')
-  $('#outer h1, #outer h3, #new_game, #reset_scores').hide()
+  $('#outer h1, #outer h2, #outer h3, #outer h4, #outer h5, #new_game, #reset_scores').hide()
   $('#left_col .purse').html(game.playerArray[0].purse)
   $('#right_col .purse').html(game.playerArray[1].purse)
   $('#roll').show().removeClass('unavailable')
@@ -187,7 +149,24 @@ function winning() {
     $('#outer h1').html(winner.username + ' Won')
     $('#outer h3 span').html(tournement.winnings - winner.bet)
   }
-};
+}
+
+function actionEndTurn() {
+  if (game.isGameOver() === true) { 
+    winning() 
+  } else {
+    if(player.remaining === 0) { 
+      $('#roll').addClass('unavailable') 
+    } else { 
+      $('#roll').removeClass('unavailable') 
+    }
+    $('#fold').hide()
+    $('#roll').show()
+    $('#end_turn').addClass('unavailable')
+    switchWhoIsActive()
+    isAbleToEnd()
+  }
+}
 
 function newGame() {
   tournement.refresh()
@@ -195,11 +174,3 @@ function newGame() {
   switchWhoIsActive()
 }
 
-$('#new_game').live('click', function() {
-  newGame();
-});
-  
-$('#reset_scores').live('click', function() {
-  tournement.resetScores()
-  newGame();
-});

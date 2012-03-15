@@ -19,7 +19,7 @@ var Tournement = Class.extend({
       newPlayer = {username: moniker, password: password, purse:  50};  // 50 is the default purse value
       allPlayers.push(newPlayer);
       $.jStorage.set("allPlayersKey", allPlayers);
-      tournement.setupPlayers(newPlayer.username, newPlayer.purse)
+      tournement.setupPlayers(newPlayer.username, newPlayer.purse, true)
       return true
     }
   },
@@ -28,7 +28,7 @@ var Tournement = Class.extend({
     var singlePlayer = _.find(allPlayers, function(obj) { return obj.username === moniker })
     if (singlePlayer != undefined) {
       if(singlePlayer.password === password) {
-        tournement.setupPlayers(singlePlayer.username, singlePlayer.purse)
+        tournement.setupPlayers(singlePlayer.username, singlePlayer.purse, true)
         return true
       } else {
         console.log('sorry your password did not match the one stored in our database')
@@ -40,8 +40,9 @@ var Tournement = Class.extend({
     }
   },
   
-  setupPlayers: function(moniker, purse) {
+  setupPlayers: function(moniker, purse, boole) {
     p = new Player(moniker, purse)
+    p.human = boole;
     game.playerArray.push(p)
     player = game.playerArray[0]
     player.active = true;
@@ -58,7 +59,6 @@ var Tournement = Class.extend({
   },
 
   transferWinnings: function() {
-    console.log('storeWinnings')
     if(game.isThereALeader() === false) {
       console.log('game.isThereALeader === false, the winnings are being stored')   
       $.jStorage.set('winnings', tournement.winnings)                 // store the winnings for next round
@@ -68,7 +68,6 @@ var Tournement = Class.extend({
       winner.adjustPurse(tournement.winnings)                         // add the winnings to his purse
       winnerDB.purse = winner.purse
       $.jStorage.set('allPlayersKey', allPlayers)
-      console.log('allPlayersKey is being set with value allPlayers')
     }
   },
   
@@ -92,7 +91,8 @@ var Tournement = Class.extend({
       p.remaining = 5;
       p.projection = 7.5;
       tournement.winnings = 0;                                              // clear out any old winnings
-      console.log(p.username + ' refreshed')
+      theRoll = undefined
+      tempKeepers = undefined;
     });
     player.active = true;
     return game.playerArray

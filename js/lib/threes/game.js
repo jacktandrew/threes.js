@@ -121,10 +121,9 @@ var Game = Class.extend({
   
   fold: function() {
     player.folded = true;
+    player.projection = 100;
     player.remaining = 0;
     game.ableToEnd = true;
-    game.endTurn()
-    
   },
   
   endTurn: function() {
@@ -133,6 +132,7 @@ var Game = Class.extend({
       game.finalizeChoices()
     }
     if(game.isGameOver() === true) {
+      console.log('tournement.endGame()')
       tournement.endGame()
     }
     theRoll = undefined;

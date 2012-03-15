@@ -7,6 +7,7 @@
   <script type="text/javascript" src="../js/lib/threes/game.js"></script>
   <script type="text/javascript" src="../js/lib/threes/player.js"></script>
   <script type="text/javascript" src="../js/lib/threes/tournement.js"></script>
+  <script type="text/javascript" src="../js/lib/threes/ai.js"></script>
   <script type="text/javascript" src="test.js"></script>
   <script type="text/javascript" src="../js/app/views/browser.js"></script>
   <link rel="stylesheet" type="text/css" href="../js/app/views/style.css" />
@@ -16,20 +17,19 @@
     }
     
     function isCPU(e){
-      $(e + ' .pword2').css('visibility','hidden');
+      $(e + ' .pword2').css('visibility', 'hidden');
       $(e + ' .newuser').attr('checked', false);
       $(e + ' .uname, ' + e + ' .pword').addClass('red')
-      // $('.cpu').removeClass('red')
     }
     
     function reveal(e){
-      $(e + ' .pword2').css('visibility','visible');
+      $(e + ' .pword2').css('visibility', 'visible');
       $(e + ' .cpu').attr('checked', false);
       $(e + ' .uname, ' + e + ' .pword').removeClass('red')
     }
     
     function conceal(e){
-      $(e + ' .pword2').css('visibility','hidden');
+      $(e + ' .pword2').css('visibility', 'hidden');
     }
   
   </script>
