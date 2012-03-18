@@ -1,12 +1,9 @@
-// var game = {};
-// var test = {};
-// var player = {};
-
-var Tournement = Class.extend({
+window.models = window.models || {}
+models.Tournement = Class.extend({
   init: function() {
     this.winnings = 0;
     this.ai = new AI();
-    this.game = new Game();
+    this.game = new models.Game();
     this.test = new Test();
   },
   
@@ -44,12 +41,12 @@ var Tournement = Class.extend({
   },
   
   setupPlayers: function(moniker, purse, boole) {
-    var p = new Player(moniker, purse)
-    p.human = boole;
-    game.playerArray.push(p)
-    player = game.playerArray[0]
-    player.active = true;
-    return player
+    var aPlayer = new Player(moniker, purse)
+    aPlayer.human = boole;
+    this.game.playerArray.push(aPlayer)
+    activePlayer = this.game.playerArray[0]
+    activePlayer.active = true;
+    return activePlayer
   },
   
   poolWinnings: function() {
@@ -99,7 +96,7 @@ var Tournement = Class.extend({
       theRoll = undefined
       tempKeepers = undefined;
     });
-    player.active = true;
+    activePlayer.active = true;
     return game.playerArray
   },
   

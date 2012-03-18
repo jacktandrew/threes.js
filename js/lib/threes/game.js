@@ -1,4 +1,5 @@
 window.models = window.models || {}
+
 models.Game = Class.extend({
   init: function() {
     this.highBet = 0;
@@ -11,7 +12,7 @@ models.Game = Class.extend({
     if(typeof(theRoll) === "undefined"){
       tempKeepers = []
       theRoll = [];
-      for (i = 0; i < player.remaining; i++) {
+      for (i = 0; i < activePlayer.remaining; i++) {
         var randNum = Math.floor(Math.random()*6) + 1;
         theRoll.push(randNum)
       }
@@ -28,15 +29,14 @@ models.Game = Class.extend({
       if ( idx !== -1 ) {
         theRoll.splice(idx, 1)
         tempKeepers.push(die)
-        player.adjustScore(die)
+        activePlayer.adjustScore(die)
       }
     }
-    game.isAbleToEnd()
+    this.isAbleToEnd()
     return tempKeepers
   },
   
   unchoose: function() {
-    console.log('game.unchoose')
     for (k = 0; k < arguments.length; k++){
       die = arguments[k]
       idx = tempKeepers.indexOf(die)
@@ -45,110 +45,102 @@ models.Game = Class.extend({
       } else {
         tempKeepers.splice(idx, 1)
         theRoll.push(die)
-        player.adjustScore(-die)
+        activePlayer.adjustScore(-die)
       }
     }
-    game.isAbleToEnd()
+    this.isAbleToEnd()
     return tempKeepers
   },
   
   finalizeChoices: function() {
-    allKeepers = player.getKeepers().concat(tempKeepers)
-    player.setKeepers(allKeepers)
+    allKeepers = activePlayer.getKeepers().concat(tempKeepers)
+    activePlayer.setKeepers(allKeepers)
     return allKeepers
   },
 
   betUp: function(theBet) {
-    player.adjustPurse(-theBet)
-    player.adjustBet(theBet)
-    game.isAbleToEnd()
-    return player.bet
+    activePlayer.adjustPurse(-theBet)
+    activePlayer.adjustBet(theBet)
+    this.isAbleToEnd()
+    return activePlayer.bet
   },
   
   resetBet: function() {
-    player.adjustPurse(player.bet - game.highBet)
-    player.adjustBet(-(player.bet - game.highBet))
-    game.isAbleToEnd()
-    return player.bet
+    activePlayer.adjustPurse(activePlayer.bet - this.highBet)
+    activePlayer.adjustBet(-(activePlayer.bet - this.highBet))
+    this.isAbleToEnd()
+    return activePlayer.bet
   },
   
   findHighBet: function() {
-    return game.highBet = _.max(_.pluck(game.playerArray, 'bet'))
+    return this.highBet = _.max(_.pluck(this.playerArray, 'bet'))
   },
   
   nextPlayer: function() {
-    idx = game.playerArray.indexOf(player)
-    if ( idx + 1 < game.playerArray.length ) {
-      player = game.playerArray[idx + 1]
-    } else if( idx + 1 === game.playerArray.length) {
-      player = game.playerArray[0]
+    idx = this.playerArray.indexOf(activePlayer)
+    if ( idx + 1 < this.playerArray.length ) {
+      activePlayer = this.playerArray[idx + 1]
+    } else if( idx + 1 === this.playerArray.length) {
+      activePlayer = this.playerArray[0]
     }
-    if (game.isAbleToPlay() === false && game.isGameOver() === false) { 
-      return game.nextPlayer() 
+    if (this.isAbleToPlay() === false && this.isGameOver() === false) { 
+      return this.nextPlayer() 
     }
-    return player.active = true;
+    return activePlayer.active = true;
   },
   
   isAbleToPlay: function() {
-    if (player.folded === true) { return false }
-    else if (player.remaining === 0 && player.bet === game.highBet) { return false }
+    if (activePlayer.folded === true) { return false }
+    else if (activePlayer.remaining === 0 && activePlayer.bet === this.highBet) { return false }
     else { return true }
   },
   
   isThereALeader: function() {
-    game.projArr = _.sortBy(game.playerArray, function(pl) { return pl.projection } );
-    if (game.projArr[0].projection === game.projArr[1].projection) {
+    this.projArr = _.sortBy(this.playerArray, function(pl) { return pl.projection } );
+    if (this.projArr[0].projection === this.projArr[1].projection) {
       return false
     } else {
-      return game.projArr[0]
+      return this.projArr[0]
     }
   },
   
   isAbleToEnd: function() {
-    if (player.bet >= game.findHighBet() || player.purse === 0 ) {
+    if (activePlayer.bet >= this.findHighBet() || activePlayer.purse === 0 ) {
       if (typeof(tempKeepers) !== "undefined") {
-        if (tempKeepers.length > 0) { return game.ableToEnd = true } 
+        if (tempKeepers.length > 0) { return this.ableToEnd = true } 
       } else {
-        if (player.keepers.length === 5) { return game.ableToEnd = true }
+        if (activePlayer.keepers.length === 5) { return this.ableToEnd = true }
       }
     }
-    return game.ableToEnd = false
+    return this.ableToEnd = false
   },
   
   isGameOver: function() {
-    mostRemainingDice = _.max(_.pluck(game.playerArray, 'remaining'))
+    mostRemainingDice = _.max(_.pluck(this.playerArray, 'remaining'))
     if (mostRemainingDice === 0) { return true }   
     else { return false }
   },
   
   fold: function() {
-    player.folded = true;
-    player.projection = 100;
-    player.remaining = 0;
-    game.ableToEnd = true;
+    activePlayer.folded = true;
+    activePlayer.projection = 100;
+    activePlayer.remaining = 0;
+    this.ableToEnd = true;
   },
   
   endTurn: function() {
-    if (game.ableToEnd === false) { return false }
+    if (this.ableToEnd === false) { return false }
     if (typeof(tempKeepers) !== "undefined"){
-      game.finalizeChoices()
+      this.finalizeChoices()
     }
-    if(game.isGameOver() === true) {
+    if(this.isGameOver() === true) {
       console.log('tournement.endGame()')
       tournement.endGame()
     }
     theRoll = undefined;
     tempKeepers = undefined;
-    game.ableToEnd = false;
-    player.active = false;
-    return game.nextPlayer()
+    this.ableToEnd = false;
+    activePlayer.active = false;
+    return this.nextPlayer()
   }
 });
-
-
-
-
-
-
-
-

@@ -39,7 +39,7 @@ views.Game = Backbone.View.extend({
       // console.log('one or more users was not verified')
       alert('You entered bogus information, not cool dude, not cool...')
     }
-    if (player.human === false) {
+    if (activePlayer.human === false) {
       this.model.ai.play()
     }
   },
@@ -62,7 +62,7 @@ views.Game = Backbone.View.extend({
   
   rollAction: function() {
     $('#roll').hide();
-    $('#fold, #sure_fold').show()
+    $('#fold').show()
     this.model.game.roll();
     html = this.intToHTML(theRoll);
     $('#inner').html(html);
@@ -71,12 +71,12 @@ views.Game = Backbone.View.extend({
   intToHTML: function(arr) {
     var html = ""
     arr.forEach( function(x) {
-      if (x === 1) { html += '<div class="die 1"><div></div></div>' } 
-      else if (x === 2) { html += '<div class="die 2"><div></div><div></div></div>' } 
-      else if (x === 3) { html += '<div class="die 3"><div></div><div></div><div></div></div>' } 
-      else if (x === 4) { html += '<div class="die 4"><div></div><div></div><div></div><div></div></div>' } 
-      else if (x === 5) { html += '<div class="die 5"><div></div><div></div><div></div><div></div><div></div></div>' } 
-      else if (x === 6) { html += '<div class="die 6"><div></div><div></div><div></div><div></div><div></div><div></div></div>' }
+      if (x === 1) { html += '<div class="die 1" rel="1"><div></div></div>' } 
+      else if (x === 2) { html += '<div class="die 2" rel="2"><div></div><div></div></div>' } 
+      else if (x === 3) { html += '<div class="die 3" rel="3"><div></div><div></div><div></div></div>' } 
+      else if (x === 4) { html += '<div class="die 4" rel="4"><div></div><div></div><div></div><div></div></div>' } 
+      else if (x === 5) { html += '<div class="die 5" rel="5"><div></div><div></div><div></div><div></div><div></div></div>' } 
+      else if (x === 6) { html += '<div class="die 6" rel="6"><div></div><div></div><div></div><div></div><div></div><div></div></div>' }
     })
     return html;
   },
@@ -87,11 +87,11 @@ views.Game = Backbone.View.extend({
     if($(die).hasClass('selected')) {
       $(die).removeClass('selected')
       this.model.game.unchoose(val)
-      $('.green .score').html(player.score)
+      $('.green .score').html(activePlayer.score)
     } else {
       $(die).addClass('selected')
       this.model.game.choose(val)
-      $('.green .score').html(player.score)
+      $('.green .score').html(activePlayer.score)
     }
     this.ableToEnd()
   },
@@ -99,10 +99,10 @@ views.Game = Backbone.View.extend({
   toggleCoins: function(event) {
     $('.green .cash_box a').each(function(index, domEle) {
       var coin = +$(domEle).html()
-      if(coin > player.purse || typeof(tempKeepers) === undefined) {
+      if(coin > activePlayer.purse || typeof(tempKeepers) === undefined) {
         $(this).addClass('unavailable')
       }
-      if(coin < player.purse) {
+      if(coin < activePlayer.purse) {
         $(this).removeClass('unavailable')
       }      
     });
@@ -112,7 +112,7 @@ views.Game = Backbone.View.extend({
     if (typeof(tempKeepers) !== "undefined") {
       html = this.intToHTML(tempKeepers)
       $('.green .keepers').append(html)
-      $('.green .score').html(player.score)
+      $('.green .score').html(activePlayer.score)
       $('#inner').html('')
     }
   },
@@ -120,21 +120,21 @@ views.Game = Backbone.View.extend({
   increaseBet: function(event) {
     event.preventDefault();
     var coin = +event.currentTarget.innerText
-    this.model.game.betUp(  )
+    this.model.game.betUp(coin)
     this.displayBet()
     this.ableToEnd()
   },
   
   displayBet: function() {
-    $('.green .purse').html(player.purse)
-    $('.green .bet').html(player.bet)
-    if(player.purse < 10) {
+    $('.green .purse').html(activePlayer.purse)
+    $('.green .bet').html(activePlayer.bet)
+    if(activePlayer.purse < 10) {
       this.toggleCoins();
     }
   },
 
   ableToEnd: function() {
-    if(this.model.game.isAbleToEnd === true) {
+    if(this.model.game.isAbleToEnd() === true) {
       $('#end_turn').removeClass('unavailable');
     } else {
       $('#end_turn').addClass('unavailable')
@@ -190,12 +190,14 @@ views.Game = Backbone.View.extend({
   },
 
   actionEndTurn: function() {
+    this.moveKeepers();
+    this.model.game.endTurn()
     if (this.model.game.isGameOver() === true) { 
       this.winning() 
     } else {
       $('#fold, #sure_fold').hide()
       $('#roll').show()
-      if(this.model.player.remaining === 0) { 
+      if(activePlayer.remaining === 0) { 
         $('#roll').addClass('unavailable') 
       } else { 
         $('#roll').removeClass('unavailable') 
@@ -203,7 +205,7 @@ views.Game = Backbone.View.extend({
       $('#end_turn').addClass('unavailable')
       this.switchWhoIsActive()
       this.ableToEnd()
-      if (this.model.player.human === false) {
+      if (activePlayer.human === false) {
         this.model.ai.play()
       }
     }
@@ -218,7 +220,7 @@ views.Game = Backbone.View.extend({
     this.model.refresh()
     this.clearOldHTML()
     this.switchWhoIsActive()
-    if (this.model.player.human === false) {
+    if (activePlayer.human === false) {
       this.model.ai.play()
     }
   }
