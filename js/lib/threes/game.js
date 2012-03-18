@@ -1,4 +1,5 @@
-var Game = Class.extend({
+window.models = window.models || {}
+models.Game = Class.extend({
   init: function() {
     this.highBet = 0;
     this.playerArray = [];
@@ -35,6 +36,7 @@ var Game = Class.extend({
   },
   
   unchoose: function() {
+    console.log('game.unchoose')
     for (k = 0; k < arguments.length; k++){
       die = arguments[k]
       idx = tempKeepers.indexOf(die)

@@ -1,16 +1,18 @@
 <head>
+  
   <script type="text/javascript" src="js/lib/jquery.js"></script>
-  <!-- <script type="text/javascript" src="js/lib/backbone.js"></script>  -->
-  <script type="text/javascript" src="js/lib/jStorage.js"></script>
-  <script type="text/javascript" src="js/lib/simple-inheritance.js"></script>
   <script type="text/javascript" src="js/lib/underscore.js"></script>
+  <script type="text/javascript" src="js/lib/simple-inheritance.js"></script>
+  <script type="text/javascript" src="js/lib/backbone.js"></script>
+  <script type="text/javascript" src="js/lib/jStorage.js"></script>
+  
+  
   <script type="text/javascript" src="js/lib/threes/game.js"></script>
   <script type="text/javascript" src="js/lib/threes/player.js"></script>
   <script type="text/javascript" src="js/lib/threes/tournement.js"></script>
   <script type="text/javascript" src="js/lib/threes/ai.js"></script>
   <script type="text/javascript" src="test/test.js"></script>
   <script type="text/javascript" src="js/app/views/browser.js"></script>
-  <script type="text/javascript" src="js/app/views/buttons.js"></script>
   <link rel="stylesheet" type="text/css" href="js/app/views/style.css" />
   <style>
     #test_results {display: none;}
@@ -64,6 +66,7 @@
   <div id="outer">
     <button id="roll" class="unavailable">Roll</button>
     <button id="fold">Fold</button>
+    <button id="sure_fold">Are you sure you want to fold?</button>
     <button id="new_game">New Game</button>
     <form>
       </br></br>
@@ -77,8 +80,8 @@
           onClick="if(this.checked == true){ isCPU('#p1'); } else { isHuman('#p1'); }" />
         <span>Computer</span>
       
-        <input type="text" class="uname" value="Username1"
-          onfocus="if(this.value == 'Username1') { this.value = ''; }" 
+        <input type="text" class="uname" value="Username 1"
+          onfocus="if(this.value == 'Username 1') { this.value = ''; }" 
           onblur="if(this.value == '') { this.value = 'Username1'; }"/>
         
         <input type="text" class="pword" value="Password" 
@@ -101,8 +104,8 @@
           onClick="if(this.checked == true){ isCPU('#p2'); } else { isHuman('#p2'); }" />
         <span>Computer</span>
       
-        <input type="text" class="uname" value="Username2"
-          onfocus="if(this.value == 'Username2') { this.value = ''; }" 
+        <input type="text" class="uname" value="Username 2"
+          onfocus="if(this.value == 'Username 2') { this.value = ''; }" 
           onblur="if(this.value == '') { this.value = 'Username2'; }"/>
         
         <input type="text" class="pword" value="Password" 
@@ -120,7 +123,6 @@
     <h2>It was a TIE!</h2>
     <h5>The the pot will go to the winner of next round</h5>
     <h3>and took home <span></span> in winnings</h3>
-    
     <button id="start">Start</button>
     <button id="end_turn" class="unavailable">End Turn</button>
     <button id="reset_scores">Reset Scores</button>

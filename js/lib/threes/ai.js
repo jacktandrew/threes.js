@@ -5,20 +5,19 @@ var AI = Class.extend({
   choose: function() {
     var die = 0;
     var anySelected = false;
-    
+    console.log(player.username + ' rolled [' + theRoll + ']')
     theRoll.forEach(function(die) {
       if (die === 1 || die === 3) {
         anySelected = true
-        tempKeepers.push(die)
+        game.choose(die)
       }
     })
 
     if (anySelected === false) {
-      die = theRoll[0]
       theRoll.sort()
-      tempKeepers.push(die)
+      die = theRoll[0]
+      game.choose(die)
     }
-    selectOrUnselect( intToHTML(tempKeepers) )
     return tempKeepers    
   },
 
@@ -33,28 +32,24 @@ var AI = Class.extend({
     } else {                        // otherwise 
       if (player === leader) {      // find out who is the leader
         var diff = secondPlace.projection - leader.projection;
-        console.log('ai is the leader')
+        // console.log(player.username + ' is the leader')
       } else {
         var diff = leader.projection - player.projection;       // and what is the lead
-        console.log('ai is behind')
+        // console.log(player.username + ' is behind')
       }
-
-      if (diff >= 2) {
-        return aiBet = call + 5
-      } else if (0 <= diff && diff < 2) {
-        return aiBet = call + 1
-      } else if (-4 <= diff && diff < 0) {
+      console.log('diff = ' + diff)
+      if (diff > 0) { return aiBet = call + Math.ceil(diff * 2) } 
+      else if (-2 < diff && diff <= 0) { 
+        console.log('-2 < diff && diff <= 0')
+        return aiBet = call 
+      } else if (call < 3) {
+        console.log('call < 3')
         return aiBet = call
-      } else if (diff < -4 && call <= 0) {
-        return aiBet = 0
-      } else if (diff < -4) {
-        if (player.remaining <= 1 && call < 5) {
-          return aiBet = call
-        } else {
-          return game.fold()
-        }
+      } else { 
+        console.log(game.playerArray)
+        return false 
       }
-    } 
+    }
   },
 
   play: function() {
@@ -62,14 +57,22 @@ var AI = Class.extend({
     ai.choose()
     moveKeepers()
     game.finalizeChoices()
+    console.log('this turn it kept [' + tempKeepers + '] >>> giving it a total of [' + allKeepers + ']')
     tempKeepers = undefined
-    aiBet = ai.selectBet()
-    if (aiBet > player.purse) { aiBet = player.purse }
-    game.betUp(aiBet)
-    displayBet()
-    game.ableToEnd = true;
-    player.active = false;
-    game.endTurn()
-    actionEndTurn()
+    if ( theBet = ai.selectBet() ) {
+      console.log('this turn it bet (' + theBet + ') >>> bringing the total bet to (' + (player.bet + theBet) + ')')
+      if (theBet > player.purse) { theBet = player.purse }
+      game.betUp(theBet)
+      displayBet()
+      game.ableToEnd = true;
+      player.active = false;
+      game.endTurn()
+      actionEndTurn()  
+    } else { 
+      console.log('theBet = ai.selectBet() was false somehow???')
+      game.fold()
+      tournement.endGame()
+      winning()
+    }
   }
 });

@@ -1,10 +1,13 @@
-var game = {};
-var test = {};
-var player = {};
+// var game = {};
+// var test = {};
+// var player = {};
 
 var Tournement = Class.extend({
   init: function() {
     this.winnings = 0;
+    this.ai = new AI();
+    this.game = new Game();
+    this.test = new Test();
   },
   
   verifyNewUser: function(moniker, password, password2) {
@@ -41,7 +44,7 @@ var Tournement = Class.extend({
   },
   
   setupPlayers: function(moniker, purse, boole) {
-    p = new Player(moniker, purse)
+    var p = new Player(moniker, purse)
     p.human = boole;
     game.playerArray.push(p)
     player = game.playerArray[0]
@@ -50,6 +53,8 @@ var Tournement = Class.extend({
   },
   
   poolWinnings: function() {
+    tournement.winnings = $.jStorage.get('winnings', 0)
+    $.jStorage.deleteKey('winnings')
     game.playerArray.forEach( function(thisGuy) {
       tournement.winnings += thisGuy.bet
       var thisGuyDB = _.find(allPlayers, function(obj) { return obj.username === thisGuy.username } )

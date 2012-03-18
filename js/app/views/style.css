@@ -37,9 +37,9 @@ button:hover, .green .purse {cursor: hand; border-style: inset;}
 
 #outer h1, #outer h2 {margin-top: 125px;}
 #outer h1, #outer h2, #outer h3, #outer h5 {text-align: center;} 
-#outer h1, #outer h2, #outer h3, #outer h5, #new_game, #end_turn, #reset_scores, #fold {display: none;}
+#outer h1, #outer h2, #outer h3, #outer h5, #new_game, #end_turn, #reset_scores, #fold, #sure_fold {display: none;}
 
-#start, #roll, #fold, #end_turn, #reset_scores, #new_game {width: 320px; height: 50px; font-size: 22px; margin: 0px 10px;}
+#start, #roll, #fold, #sure_fold, #end_turn, #reset_scores, #new_game {width: 320px; height: 50px; font-size: 22px; margin: 0px 10px;}
 #fold, #roll, #new_game {margin-top: 1px;}
 #start, #end_turn, #reset_scores {top: 285px;}
 

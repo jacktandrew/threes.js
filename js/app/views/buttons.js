@@ -10,21 +10,21 @@ $('#roll').live('click', function() {
 
 // select or unselect a die
 $('.die').live('click', function() {
-  console.log( $(this) )
   selectOrUnselect( $(this) );
-  isAbleToEnd();
+  ableToEnd();
 });
 
 // fold
 $('#fold').live('click', function() {
-  reallyFold = confirm('Are you sure you want to fold?')
-  if (reallyFold) {
+  $('#fold').hide()
+  $('#sure_fold').show()
+});
+  
+$('#sure_fold').live('click', function() {
     game.fold()
     game.isGameOver()
     tournement.endGame()
     winning()
-    $('#inner').html('')
-  }
 });
 
 // new game
@@ -42,7 +42,7 @@ $('#reset_scores').live('click', function() {
 $('.green .cash_box a').live('click', function() {
   game.betUp( +$(this).html() )
   displayBet()
-  game.isAbleToEnd()
+  ableToEnd()
 });
 
 // reset bet
