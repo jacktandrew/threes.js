@@ -1,5 +1,4 @@
-window.models = window.models || {}
-models.Tournement = Class.extend({
+Tournement = Class.extend({
   init: function() {
     this.winnings = 0;
     this.ai = new AI();
@@ -19,7 +18,7 @@ models.Tournement = Class.extend({
       newPlayer = {username: moniker, password: password, purse:  50};  // 50 is the default purse value
       allPlayers.push(newPlayer);
       $.jStorage.set("allPlayersKey", allPlayers);
-      tournement.setupPlayers(newPlayer.username, newPlayer.purse, true)
+      this.setupPlayers(newPlayer.username, newPlayer.purse, true)
       return true
     }
   },
@@ -28,7 +27,7 @@ models.Tournement = Class.extend({
     var singlePlayer = _.find(allPlayers, function(obj) { return obj.username === moniker })
     if (singlePlayer != undefined) {
       if(singlePlayer.password === password) {
-        tournement.setupPlayers(singlePlayer.username, singlePlayer.purse, true)
+        this.setupPlayers(singlePlayer.username, singlePlayer.purse, true)
         return true
       } else {
         console.log('sorry your password did not match the one stored in our database')
@@ -50,31 +49,31 @@ models.Tournement = Class.extend({
   },
   
   poolWinnings: function() {
-    tournement.winnings = $.jStorage.get('winnings', 0)
+    this.winnings = $.jStorage.get('winnings', 0)
     $.jStorage.deleteKey('winnings')
-    game.playerArray.forEach( function(thisGuy) {
-      tournement.winnings += thisGuy.bet
+    this.game.playerArray.forEach( function(thisGuy) {
+      this.winnings += thisGuy.bet
       var thisGuyDB = _.find(allPlayers, function(obj) { return obj.username === thisGuy.username } )
       thisGuyDB.purse = thisGuy.purse
     });
-    return tournement.winnings
+    return this.winnings
   },
 
   transferWinnings: function() {
-    if(game.isThereALeader() === false) {
+    if(this.game.isThereALeader() === false) {
       console.log('game.isThereALeader === false, the winnings are being stored')   
-      $.jStorage.set('winnings', tournement.winnings)                 // store the winnings for next round
+      $.jStorage.set('winnings', this.winnings)                 // store the winnings for next round
     } else {                                              
-      var winner = game.isThereALeader()
+      var winner = this.game.isThereALeader()
       var winnerDB = _.find(allPlayers, function(obj) { return obj.username === winner.username } )
-      winner.adjustPurse(tournement.winnings)                         // add the winnings to his purse
+      winner.adjustPurse(this.winnings)                         // add the winnings to his purse
       winnerDB.purse = winner.purse
       $.jStorage.set('allPlayersKey', allPlayers)
     }
   },
   
   resetScores: function() {
-    game.playerArray.forEach( function(pl) {
+    this.game.playerArray.forEach( function(pl) {
       pl.purse = 50;
       var aPlayer = _.find(allPlayers, function(obj) { return obj.username === pl.username } )
       aPlayer.purse = 50;
@@ -83,7 +82,7 @@ models.Tournement = Class.extend({
   },
   
   refresh: function() {
-    game.playerArray.forEach( function(p) {
+    this.game.playerArray.forEach( function(p) {
       p.keepers = [];
       p.score = 0
       p.ableToEnd = false
@@ -92,16 +91,16 @@ models.Tournement = Class.extend({
       p.bet = 0
       p.remaining = 5;
       p.projection = 7.5;
-      tournement.winnings = 0;                                              // clear out any old winnings
+      this.winnings = 0;                                              // clear out any old winnings
       theRoll = undefined
       tempKeepers = undefined;
     });
     activePlayer.active = true;
-    return game.playerArray
+    return this.game.playerArray
   },
   
   endGame: function() {
-    tournement.poolWinnings()
-    tournement.transferWinnings()
+    this.poolWinnings()
+    this.transferWinnings()
   }
 });

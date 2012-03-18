@@ -19,29 +19,6 @@
   <style>
     #test_results {display: none;}
   </style>
-  <script>
-    function isHuman(e){
-      $(e + ' .uname, ' + e + ' .pword').removeClass('red')
-    }
-    
-    function isCPU(e){
-      $(e + ' .pword2').css('visibility', 'hidden');
-      $(e + ' .newuser').attr('checked', false);
-      $(e + ' .uname, ' + e + ' .pword').addClass('red')
-    }
-    
-    function reveal(e){
-      $(e + ' .pword2').css('visibility', 'visible');
-      $(e + ' .cpu').attr('checked', false);
-      $(e + ' .uname, ' + e + ' .pword').removeClass('red')
-    }
-    
-    function conceal(e){
-      $(e + ' .pword2').css('visibility', 'hidden');
-    }
-  
-  </script>
-  
 </head>
 
 <body>

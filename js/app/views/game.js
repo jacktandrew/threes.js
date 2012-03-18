@@ -71,7 +71,7 @@ views.Game = Backbone.View.extend({
   intToHTML: function(arr) {
     var html = ""
     arr.forEach( function(x) {
-      if (x === 1) { html += '<div class="die 1" rel="1"><div></div></div>' } 
+           if (x === 1) { html += '<div class="die 1" rel="1"><div></div></div>' } 
       else if (x === 2) { html += '<div class="die 2" rel="2"><div></div><div></div></div>' } 
       else if (x === 3) { html += '<div class="die 3" rel="3"><div></div><div></div><div></div></div>' } 
       else if (x === 4) { html += '<div class="die 4" rel="4"><div></div><div></div><div></div><div></div></div>' } 
@@ -167,8 +167,8 @@ views.Game = Backbone.View.extend({
     $('.green .bet, .red .bet, .green .score, .red .score').html('0')
     $('#outer h1, #outer h3 span, #left_col .keepers, #right_col .keepers').html('')
     $('#outer h1, #outer h2, #outer h3, #outer h4, #outer h5, #new_game, #reset_scores').hide()
-    $('#left_col .purse').html(game.playerArray[0].purse)
-    $('#right_col .purse').html(game.playerArray[1].purse)
+    $('#left_col .purse').html(this.model.game.playerArray[0].purse)
+    $('#right_col .purse').html(this.model.game.playerArray[1].purse)
     $('#roll').show().removeClass('unavailable')
     $('#end_turn').show().addClass('unavailable')
   },

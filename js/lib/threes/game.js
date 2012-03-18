@@ -1,5 +1,4 @@
 window.models = window.models || {}
-
 models.Game = Class.extend({
   init: function() {
     this.highBet = 0;
@@ -58,9 +57,9 @@ models.Game = Class.extend({
     return allKeepers
   },
 
-  betUp: function(theBet) {
-    activePlayer.adjustPurse(-theBet)
-    activePlayer.adjustBet(theBet)
+  betUp: function(integer) {
+    activePlayer.adjustPurse(-integer)
+    activePlayer.adjustBet(integer)
     this.isAbleToEnd()
     return activePlayer.bet
   },

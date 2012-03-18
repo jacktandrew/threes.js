@@ -2,30 +2,30 @@ var AI = Class.extend({
   init: function() {
   },
   
-  choose: function() {
+  selectDice: function() {
     var die = 0;
     var anySelected = false;
     console.log(activePlayer.username + ' rolled [' + theRoll + ']')
     theRoll.forEach(function(die) {
       if (die === 1 || die === 3) {
         anySelected = true
-        game.choose(die)
+        tournement.game.choose(die)
       }
     })
 
     if (anySelected === false) {
       theRoll.sort()
       die = theRoll[0]
-      game.choose(die)
+      tournement.game.choose(die)
     }
     return tempKeepers    
   },
 
   selectBet: function() {
     var aiBet = 0;
-    var call = game.highBet - activePlayer.bet;
-    var leader = game.isThereALeader();
-    var secondPlace = game.projArr[1];
+    var call = tournement.game.highBet - activePlayer.bet;
+    var leader = tournement.game.isThereALeader();
+    var secondPlace = tournement.game.projArr[1];
     
     if (leader === false) {         // there is a tie
       return aiBet = call + 1       // call and raise one
@@ -46,33 +46,32 @@ var AI = Class.extend({
         console.log('call < 3')
         return aiBet = call
       } else { 
-        console.log(game.playerArray)
+        console.log(tournement.game.playerArray)
         return false 
       }
     }
   },
-
+  
   play: function() {
-    rollAction()
-    ai.choose()
-    moveKeepers()
-    game.finalizeChoices()
+    gameView.rollAction()
+    this.selectDice()
+    gameView.moveKeepers()
+    tournement.game.finalizeChoices()
     console.log('this turn it kept [' + tempKeepers + '] >>> giving it a total of [' + allKeepers + ']')
     tempKeepers = undefined
-    if ( theBet = ai.selectBet() ) {
+    if (theBet = this.selectBet() ) {
       console.log('this turn it bet (' + theBet + ') >>> bringing the total bet to (' + (activePlayer.bet + theBet) + ')')
       if (theBet > activePlayer.purse) { theBet = activePlayer.purse }
-      game.betUp(theBet)
-      displayBet()
-      game.ableToEnd = true;
+      tournement.game.betUp(theBet)
+      gameView.displayBet()
+      tournement.game.ableToEnd = true;
       activePlayer.active = false;
-      game.endTurn()
-      actionEndTurn()  
-    } else { 
-      console.log('theBet = ai.selectBet() was false somehow???')
-      game.fold()
+      tournement.game.endTurn()
+      gameView.actionEndTurn()  
+    } else {
+      tournement.game.fold()
       tournement.endGame()
-      winning()
+      gameView.winning()
     }
   }
 });
