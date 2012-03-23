@@ -69,21 +69,25 @@ views.Game = Backbone.View.extend({
   },
 
   intToHTML: function(arr) {
-    var html = ""
+    var dice = $('<div></div>')
     arr.forEach( function(x) {
-           if (x === 1) { html += '<div class="die 1" rel="1"><div></div></div>' } 
-      else if (x === 2) { html += '<div class="die 2" rel="2"><div></div><div></div></div>' } 
-      else if (x === 3) { html += '<div class="die 3" rel="3"><div></div><div></div><div></div></div>' } 
-      else if (x === 4) { html += '<div class="die 4" rel="4"><div></div><div></div><div></div><div></div></div>' } 
-      else if (x === 5) { html += '<div class="die 5" rel="5"><div></div><div></div><div></div><div></div><div></div></div>' } 
-      else if (x === 6) { html += '<div class="die 6" rel="6"><div></div><div></div><div></div><div></div><div></div><div></div></div>' }
+      var die = $("<div class='die'></div>")
+      die.addClass('_' + x)
+      die.append( makePips(x) )
+      dice.append( die )
+
+      function makePips(x) {
+        var starter = "<div></div>"
+        if (x < 1) { return "" }
+        else { return starter.concat( makePips(x-1) ); }
+      }
     })
-    return html;
+    return dice;
   },
 
   selectOrUnselect: function(event) {
     var die = event.currentTarget
-    var val = +die.className.charAt(4)
+    var val = +die.className.charAt(5)
     if($(die).hasClass('selected')) {
       $(die).removeClass('selected')
       this.model.game.unchoose(val)
@@ -185,7 +189,7 @@ views.Game = Backbone.View.extend({
       $('#outer h1, #outer h3').show()
       var winner = this.model.game.isThereALeader()
       $('#outer h1').html(winner.username + ' Won')
-      $('#outer h3 span').html(this.model.winnings - winner.bet)
+      $('#outer h3 span').html(winnings - winner.bet)
     }
   },
 

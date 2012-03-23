@@ -69,31 +69,31 @@ button:hover, .green .purse {cursor: hand; border-style: inset;}
   margin-top: 5px; font-size: 0px;}
 .die div {border-radius: 5px; height: 4px; width: 5px; background: #333; position: absolute; border:2px inset #444;}
 
-.die[rel="3"] {margin-left: 10px;}
-.die[rel="1"] {margin-left: 60px;}
-.die[rel="2"] {margin-left: 110px;}
-.die[rel="4"] {margin-left: 160px;}
-.die[rel="5"] {margin-left: 210px;}
-.die[rel="6"] {margin-left: 260px;}
+.die._3 {margin-left: 10px;}
+.die._1 {margin-left: 60px;}
+.die._2 {margin-left: 110px;}
+.die._4 {margin-left: 160px;}
+.die._5 {margin-left: 210px;}
+.die._6 {margin-left: 260px;}
 
-.die[rel="1"] div {top: 11px; left: 13px;}
+.die._1 div {top: 11px; left: 13px;}
 
-.die[rel="2"] div, .die[rel="4"] div {top: 5px; left: 6px;}
-.die[rel="2"] div:last-child, .die[rel="4"] div:last-child {top: 17px; left: 20px;}
+.die._2 div, .die._4 div {top: 5px; left: 6px;}
+.die._2 div:last-child, .die._4 div:last-child {top: 17px; left: 20px;}
 
-.die[rel="3"] div, .die[rel="5"] div {top: 3px; left: 4px;}
-.die[rel="3"] div:nth-child(1), .die[rel="5"] div:nth-child(2) {top: 11px; left: 13px;}
-.die[rel="3"] div:last-child, .die[rel="5"] div:last-child {top: 19px; left: 22px;}
+.die._3 div, .die._5 div {top: 3px; left: 4px;}
+.die._3 div:nth-child(1), .die._5 div:nth-child(2) {top: 11px; left: 13px;}
+.die._3 div:last-child, .die._5 div:last-child {top: 19px; left: 22px;}
 
-.die[rel="4"] div:nth-child(1) {top: 5px; left: 20px;}
-.die[rel="4"] div:nth-child(2) {top: 17px; left: 6px;}
+.die._4 div:nth-child(1) {top: 5px; left: 20px;}
+.die._4 div:nth-child(2) {top: 17px; left: 6px;}
 
-.die[rel="5"] div:nth-child(1) {top: 3px; left: 22px;}
-.die[rel="5"] div:nth-child(3) {top: 19px; left: 4px;}
+.die._5 div:nth-child(1) {top: 3px; left: 22px;}
+.die._5 div:nth-child(3) {top: 19px; left: 4px;}
 
-.die[rel="6"] div {top: 1px; left: 4px;}
-.die[rel="6"] div:nth-child(1) {top: 11px; left: 4px;}
-.die[rel="6"] div:nth-child(2) {top: 21px; left: 4px;}
-.die[rel="6"] div:nth-child(3) {top: 1px; left: 22px;}
-.die[rel="6"] div:nth-child(4) {top: 11px; left: 22px;}
-.die[rel="6"] div:nth-child(5) {top: 21px; left: 22px;}
+.die._6 div {top: 1px; left: 4px;}
+.die._6 div:nth-child(1) {top: 11px; left: 4px;}
+.die._6 div:nth-child(2) {top: 21px; left: 4px;}
+.die._6 div:nth-child(3) {top: 1px; left: 22px;}
+.die._6 div:nth-child(4) {top: 11px; left: 22px;}
+.die._6 div:nth-child(5) {top: 21px; left: 22px;}

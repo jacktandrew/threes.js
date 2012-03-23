@@ -1,6 +1,5 @@
 Tournement = Class.extend({
   init: function() {
-    this.winnings = 0;
     this.ai = new AI();
     this.game = new models.Game();
     this.test = new Test();
@@ -49,24 +48,26 @@ Tournement = Class.extend({
   },
   
   poolWinnings: function() {
-    this.winnings = $.jStorage.get('winnings', 0)
+    winnings = $.jStorage.get('winnings', 0)
     $.jStorage.deleteKey('winnings')
-    this.game.playerArray.forEach( function(thisGuy) {
-      this.winnings += thisGuy.bet
-      var thisGuyDB = _.find(allPlayers, function(obj) { return obj.username === thisGuy.username } )
-      thisGuyDB.purse = thisGuy.purse
+    this.game.playerArray.forEach( function(plyr) {
+      winnings += plyr.bet
+      console.log('winnings = ' + winnings)
+      var plyrDB = _.find(allPlayers, function(obj) { return obj.username === plyr.username } )
+      plyrDB.purse = plyr.purse
     });
-    return this.winnings
+    return winnings
   },
 
   transferWinnings: function() {
     if(this.game.isThereALeader() === false) {
       console.log('game.isThereALeader === false, the winnings are being stored')   
-      $.jStorage.set('winnings', this.winnings)                 // store the winnings for next round
+      $.jStorage.set('winnings', winnings)                 // store the winnings for next round
     } else {                                              
       var winner = this.game.isThereALeader()
+      console.log('winner = ' + winner.username)
       var winnerDB = _.find(allPlayers, function(obj) { return obj.username === winner.username } )
-      winner.adjustPurse(this.winnings)                         // add the winnings to his purse
+      winner.adjustPurse(winnings)                         // add the winnings to his purse
       winnerDB.purse = winner.purse
       $.jStorage.set('allPlayersKey', allPlayers)
     }
@@ -91,7 +92,7 @@ Tournement = Class.extend({
       p.bet = 0
       p.remaining = 5;
       p.projection = 7.5;
-      this.winnings = 0;                                              // clear out any old winnings
+      winnings = 0;                                              // clear out any old winnings
       theRoll = undefined
       tempKeepers = undefined;
     });

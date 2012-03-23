@@ -110,7 +110,7 @@ models.Game = Class.extend({
       } else {
         if (activePlayer.keepers.length === 5) { return this.ableToEnd = true }
       }
-    }
+    } 
     return this.ableToEnd = false
   },
   

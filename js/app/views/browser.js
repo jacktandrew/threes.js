@@ -1,7 +1,7 @@
 $(document).ready(function() {
   tournement = new Tournement();
   gameView = new views.Game({el: $('body'), model: tournement} );
-  allPlayers = $.jStorage.get("allPlayersKey", [ {username: "Username 1", password: "Password", purse: 50}, {username: "Username 2", password: "Password", purse: 50}, {username: "Computer 1", password: "Password", purse: 50}, {username: "Computer 2", password: "Password", purse: 50} ] );
+  allPlayers = $.jStorage.get("allPlayersKey", [ {username: "Username1", password: "Password", purse: 50}, {username: "Username2", password: "Password", purse: 50}, {username: "Computer 1", password: "Password", purse: 50}, {username: "Computer 2", password: "Password", purse: 50} ] );
 });
 
 function isHuman(e){
