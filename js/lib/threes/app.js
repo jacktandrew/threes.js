@@ -86,7 +86,7 @@ $(document).ready(function(){
     $('.fold').removeClass('fold').html('Roll').addClass('roll')
 
     function winning(winner, loser){
-      $('#outer h1, #outer h3, #new_game').show()
+      $('#outer h1, #outer h3, #rematch').show()
       $('#outer h1').prepend($(winner +' h4').html())
       $('#outer h3 span').append(parseInt($(winner + ' .bet').html()))
       $(winner + ' .purse').html(parseInt($(winner + ' .purse').html()) + parseInt($(winner + ' .bet').html()) + parseInt($(loser + ' .bet').html()))

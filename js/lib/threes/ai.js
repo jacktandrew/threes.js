@@ -27,6 +27,7 @@ var AI = Class.extend({
     var leader = tournement.game.isThereALeader();
     var secondPlace = tournement.game.projArr[1];
     
+    console.log('call = ' + call)
     if (leader === false) {         // there is a tie
       return aiBet = call + 1       // call and raise one
     } else {                        // otherwise 
@@ -38,14 +39,16 @@ var AI = Class.extend({
         // console.log(activePlayer.username + ' is behind')
       }
       console.log('diff = ' + diff)
-      if (diff > 0) { return aiBet = call + Math.ceil(diff * 2) } 
-      else if (-2 < diff && diff <= 0) { 
-        console.log('-2 < diff && diff <= 0')
-        return aiBet = call 
-      } else if (call < 3) {
-        console.log('call < 3')
+      if (diff > 0) {
+        return aiBet = call + Math.ceil(diff * 2)
+      } else if (-3 <= diff && diff <= 0) {
+        console.log('-3 < diff && diff <= 0')
         return aiBet = call
-      } else { 
+      } else if (call < 3) {
+        console.log('call = ' + call)
+        return aiBet = call
+      } else {
+        console.log('folding')
         console.log(tournement.game.playerArray)
         return false 
       }
@@ -59,7 +62,13 @@ var AI = Class.extend({
     tournement.game.finalizeChoices()
     console.log('this turn it kept [' + tempKeepers + '] >>> giving it a total of [' + allKeepers + ']')
     tempKeepers = undefined
-    if (theBet = this.selectBet() ) {
+    var theBet = this.selectBet();
+    if (theBet === false) {
+      console.log('theBet = ' + theBet)
+      tournement.game.fold()
+      tournement.endGame()
+      gameView.winning()
+    } else {
       console.log('this turn it bet (' + theBet + ') >>> bringing the total bet to (' + (activePlayer.bet + theBet) + ')')
       if (theBet > activePlayer.purse) { theBet = activePlayer.purse }
       tournement.game.betUp(theBet)
@@ -68,10 +77,6 @@ var AI = Class.extend({
       activePlayer.active = false;
       tournement.game.endTurn()
       gameView.actionEndTurn()  
-    } else {
-      tournement.game.fold()
-      tournement.endGame()
-      gameView.winning()
     }
   }
 });

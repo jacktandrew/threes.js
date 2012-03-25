@@ -11,8 +11,9 @@ views.Game = Backbone.View.extend({
     "click .die":                 "selectOrUnselect",
     "click #fold":                "fold",
     "click #sure_fold":           "sureFold",
-    "click #new_game":            "newGame",
+    "click #rematch":             "newGame",
     "click #reset_scores":        "resetScore",
+    "click #new_players":         "newPlayers",
     "click .green .cash_box a":   "increaseBet",
     "click #end_turn":            "actionEndTurn"
   },
@@ -45,9 +46,9 @@ views.Game = Backbone.View.extend({
   },
   
   verifyUser: function(e) {
-    moniker = $( e + ' .uname').attr('value');
-    password = $( e + ' .pword').attr('value');
-    password2 = $( e + ' .pword2').attr('value');
+    moniker = $( e + ' .uname').val();
+    password = $( e + ' .pword').val();
+    password2 = $( e + ' .pword2').val();
     if($(e + ' .cpu').attr('checked') === "checked" ) {
       number = e.charAt(2)
       this.model.setupPlayers('Computer ' + number, 50, false)
@@ -170,7 +171,7 @@ views.Game = Backbone.View.extend({
   clearOldHTML: function() {
     $('.green .bet, .red .bet, .green .score, .red .score').html('0')
     $('#outer h1, #outer h3 span, #left_col .keepers, #right_col .keepers').html('')
-    $('#outer h1, #outer h2, #outer h3, #outer h4, #outer h5, #new_game, #reset_scores').hide()
+    $('#outer h1, #outer h2, #outer h3, #outer h4, #outer h5, #rematch, #reset_scores').hide()
     $('#left_col .purse').html(this.model.game.playerArray[0].purse)
     $('#right_col .purse').html(this.model.game.playerArray[1].purse)
     $('#roll').show().removeClass('unavailable')
@@ -180,7 +181,7 @@ views.Game = Backbone.View.extend({
   winning: function() {
     $('#inner').html('')
     $('#roll, #fold, #sure_fold, #end_turn').hide()
-    $('#new_game, #reset_scores').show()
+    $('#rematch, #reset_scores, #new_players').show()
     $('#left_col .purse').html(this.model.game.playerArray[0].purse)
     $('#right_col .purse').html(this.model.game.playerArray[1].purse)
     if (this.model.game.isThereALeader() === false) {
@@ -218,6 +219,17 @@ views.Game = Backbone.View.extend({
   resetScore: function() {
     this.model.resetScores()
     this.newGame();
+  },
+  
+  newPlayers: function() {
+    this.clearOldHTML()
+    this.model.newPlayers();
+    $('#left_col h4, #right_col h4').html('Username')
+    $('#left_col .purse, #right_col .purse').html('0')
+    $('#rematch, #reset_scores, #new_players, #end_turn').hide()
+    $('#outer form, #outer form h4, #roll, #start').show()
+    $('#roll').addClass('unavailable')
+    $('#left_col, #right_col').addClass('red')
   },
 
   newGame: function() {

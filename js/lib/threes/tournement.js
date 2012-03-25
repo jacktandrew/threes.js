@@ -82,6 +82,10 @@ Tournement = Class.extend({
     return $.jStorage.set('allPlayersKey', allPlayers)
   },
   
+  newPlayers: function() {
+    this.game.playerArray = []
+  },
+  
   refresh: function() {
     this.game.playerArray.forEach( function(p) {
       p.keepers = [];

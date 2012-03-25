@@ -28,7 +28,7 @@ $('#sure_fold').live('click', function() {
 });
 
 // new game
-$('#new_game').live('click', function() {
+$('#rematch').live('click', function() {
   newGame();
 });
 
