@@ -2,48 +2,18 @@ Tournement = Class.extend({
   init: function() {
     this.ai = new AI();
     this.game = new models.Game();
-    this.test = new Test();
   },
   
-  verifyNewUser: function(moniker, password, password2) {
-    var singlePlayer = _.find(allPlayers, function(obj) { return obj.username === moniker })
-    if (singlePlayer != undefined) {
-      console.log('sorry another user is already using that name')
-      return false
-    } else if (password != password2) {        
-      console.log('sorry, the passwords you entered did not match')
-      return false
-    } else {
-      newPlayer = {username: moniker, password: password, purse:  50};  // 50 is the default purse value
-      allPlayers.push(newPlayer);
-      $.jStorage.set("allPlayersKey", allPlayers);
-      this.setupPlayers(newPlayer.username, newPlayer.purse, true)
-      return true
-    }
-  },
-  
-  verifyExistingUser: function(moniker, password) {
-    var singlePlayer = _.find(allPlayers, function(obj) { return obj.username === moniker })
-    if (singlePlayer != undefined) {
-      if(singlePlayer.password === password) {
-        this.setupPlayers(singlePlayer.username, singlePlayer.purse, true)
-        return true
-      } else {
-        console.log('sorry your password did not match the one stored in our database')
-        return false
-      }
-    } else {
-      console.log('sorry we could not find that name in our database')
-      return false
-    }
-  },
-  
-  setupPlayers: function(moniker, purse, boole) {
-    var aPlayer = new Player(moniker, purse)
-    aPlayer.human = boole;
-    this.game.playerArray.push(aPlayer)
+  setupPlayers: function(moniker, purse) {
+    var human = new Player(moniker, purse)
+    var artIntel = _.find(allPlayers, function(obj) { return obj.username === 'Art Intel' })
+    var ai = new Player(artIntel.username, artIntel.purse)
+    ai.human = false;
+    this.game.playerArray.push(human)
+    this.game.playerArray.push(ai)
     activePlayer = this.game.playerArray[0]
     activePlayer.active = true;
+    gameView.startGame();
     return activePlayer
   },
   

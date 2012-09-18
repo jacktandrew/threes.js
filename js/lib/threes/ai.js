@@ -1,6 +1,5 @@
 var AI = Class.extend({
-  init: function() {
-  },
+  init: function() {},
   
   selectDice: function() {
     var die = 0;
@@ -9,14 +8,20 @@ var AI = Class.extend({
     theRoll.forEach(function(die) {
       if (die === 1 || die === 3) {
         anySelected = true
-        tournement.game.choose(die)
+        window.setTimeout(function(){
+          $('#inner div._' + die).addClass('selected').css({'background':'yellow'})
+          tournement.game.choose(die)
+        }, 500);
       }
-    })
+    });
 
     if (anySelected === false) {
       theRoll.sort()
       die = theRoll[0]
-      tournement.game.choose(die)
+      $('#inner div._' + die + ':first-child').addClass('selected').css({'background':'yellow'})
+      window.setTimeout(function(){
+        tournement.game.choose(die)
+      }, 500);
     }
     return tempKeepers    
   },
@@ -56,13 +61,21 @@ var AI = Class.extend({
   },
   
   play: function() {
-    gameView.rollAction()
-    this.selectDice()
+    gameView.rollAction();
+    window.setTimeout(function() {
+      tournement.ai.selectDice();
+    }, 500);
+    window.setTimeout(function() {
+      tournement.ai.wrapUp();
+    }, 3000);
+  },
+
+  wrapUp: function() {
     gameView.moveKeepers()
     tournement.game.finalizeChoices()
     console.log('this turn it kept [' + tempKeepers + '] >>> giving it a total of [' + allKeepers + ']')
     tempKeepers = undefined
-    var theBet = this.selectBet();
+    var theBet = tournement.ai.selectBet();
     if (theBet === false) {
       console.log('theBet = ' + theBet)
       tournement.game.fold()

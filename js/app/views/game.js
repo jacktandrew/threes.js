@@ -6,25 +6,21 @@ views.Game = Backbone.View.extend({
   },
 
   events: {
-    "click #start":               "startGame", 
+    "click #start":               "setupUser", 
     "click #roll":                "rollAction",
     "click .die":                 "selectOrUnselect",
     "click #fold":                "fold",
     "click #sure_fold":           "sureFold",
     "click #rematch":             "newGame",
     "click #reset_scores":        "resetScore",
-    "click #new_players":         "newPlayers",
-    "click .green .cash_box a":   "increaseBet",
+    "click #new_player":         "newPlayers",
+    "click #left_col.green .cash_box a":   "increaseBet",
     "click #end_turn":            "actionEndTurn"
   },
 
-  render: function() {
-    
-  },
+  render: function() {},
   
   startGame: function(){
-    this.verifyUser('#p1')
-    this.verifyUser('#p2')
     if(this.model.game.playerArray.length >= 2) {
       $('.green .bet, .red .bet, .green .score, .red .score').html('0')
       $('#start').hide()
@@ -36,28 +32,21 @@ views.Game = Backbone.View.extend({
       $('#right_col .purse').html(this.model.game.playerArray[1].purse)
       $('#left_col h4').html(this.model.game.playerArray[0].username)
       $('#right_col h4').html(this.model.game.playerArray[1].username)
-    } else {
-      // console.log('one or more users was not verified')
-      alert('You entered bogus information, not cool dude, not cool...')
-    }
+    } 
     if (activePlayer.human === false) {
       this.model.ai.play()
     }
   },
   
-  verifyUser: function(e) {
-    moniker = $( e + ' .uname').val();
-    password = $( e + ' .pword').val();
-    password2 = $( e + ' .pword2').val();
-    if($(e + ' .cpu').attr('checked') === "checked" ) {
-      number = e.charAt(2)
-      this.model.setupPlayers('Computer ' + number, 50, false)
+  setupUser: function() {
+    var name = $('div#outer form input.uname').val()
+    var existing = _.find(allPlayers, function(obj) { return obj.username === name })
+    if (existing != undefined) {
+      tournement.setupPlayers(name, existing.purse)
     } else {
-      if($(e + ' .newuser').attr('checked') === "checked") {
-        this.model.verifyNewUser(moniker, password, password2);
-      } else {
-        this.model.verifyExistingUser(moniker, password);
-      }
+      tournement.setupPlayers(name, 50)
+      allPlayers.push({username: name, purse: 50});
+      $.jStorage.set("allPlayersKey", allPlayers);
     }
   },
   
@@ -150,7 +139,7 @@ views.Game = Backbone.View.extend({
     if(this.model.game.playerArray[0].active === true) {
       $('#left_col').removeClass('red').addClass('green')
       $('#right_col').removeClass('green').addClass('red')
-    } else if(this.model.game.playerArray[1].active === true) {
+    } else if (this.model.game.playerArray[1].active === true) {
       $('#right_col').removeClass('red').addClass('green')
       $('#left_col').removeClass('green').addClass('red')
     }
@@ -171,7 +160,7 @@ views.Game = Backbone.View.extend({
   clearOldHTML: function() {
     $('.green .bet, .red .bet, .green .score, .red .score').html('0')
     $('#outer h1, #outer h3 span, #left_col .keepers, #right_col .keepers').html('')
-    $('#outer h1, #outer h2, #outer h3, #outer h4, #outer h5, #rematch, #reset_scores').hide()
+    $('#outer h1, #outer h2, #outer h3, #outer h4, #outer h5, #rematch, #new_player, #reset_scores').hide()
     $('#left_col .purse').html(this.model.game.playerArray[0].purse)
     $('#right_col .purse').html(this.model.game.playerArray[1].purse)
     $('#roll').show().removeClass('unavailable')
@@ -181,9 +170,11 @@ views.Game = Backbone.View.extend({
   winning: function() {
     $('#inner').html('')
     $('#roll, #fold, #sure_fold, #end_turn').hide()
-    $('#rematch, #reset_scores, #new_players').show()
+    $('#rematch, #reset_scores, #new_player').show()
+    $('#right_col, #left_col').removeClass('green').addClass('red')
     $('#left_col .purse').html(this.model.game.playerArray[0].purse)
     $('#right_col .purse').html(this.model.game.playerArray[1].purse)
+    this.toggleCoins()
     if (this.model.game.isThereALeader() === false) {
       $('#outer h2, #outer h5').show()
     } else {
@@ -200,12 +191,12 @@ views.Game = Backbone.View.extend({
     if (this.model.game.isGameOver() === true) { 
       this.winning() 
     } else {
-      $('#fold, #sure_fold').hide()
-      $('#roll').show()
-      if(activePlayer.remaining === 0) { 
-        $('#roll').addClass('unavailable') 
-      } else { 
-        $('#roll').removeClass('unavailable') 
+      if(activePlayer.remaining === 0) {
+        $('#roll').hide()
+        $('#fold').show().removeClass('unavailable')
+      } else {
+        $('#fold, #sure_fold').hide()
+        $('#roll').show().removeClass('unavailable') 
       }
       $('#end_turn').addClass('unavailable')
       this.switchWhoIsActive()
@@ -226,7 +217,7 @@ views.Game = Backbone.View.extend({
     this.model.newPlayers();
     $('#left_col h4, #right_col h4').html('Username')
     $('#left_col .purse, #right_col .purse').html('0')
-    $('#rematch, #reset_scores, #new_players, #end_turn').hide()
+    $('#rematch, #reset_scores, #new_player, #end_turn').hide()
     $('#outer form, #outer form h4, #roll, #start').show()
     $('#roll').addClass('unavailable')
     $('#left_col, #right_col').addClass('red')
